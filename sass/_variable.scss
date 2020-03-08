@@ -1,0 +1,209 @@
+// Color ----
+
+$white      : #fff;
+
+$gray-200   : #f2f2f2;
+$gray-300   : lightgray;
+$gray-400   : #b2b2b2;
+$gray-500   : #adb5bd;
+$gray-800   : gray;
+$gray-900   : #2f2f2f;
+$black      : #000;
+
+$red-800    : #ad0a1a;
+$red-700    : #ff0019;
+$red-500    : #fa5869;
+$red-300    : #fe586a;
+$red-200    : #eb9da5;
+
+$orange     : #ff5722;
+$orange-500 : orange;
+
+$blue-200   : #92beff;
+$blue-700   : #3989ff;
+$blue-800   : #0d6efd;
+$green      : green;
+$green-400  : #07aa07;    
+$green-200  : #6ed786;   
+
+$main       : $gray-200 ;
+$contrast   : $white    ;
+$sub        : $gray-800 ;
+$lightup    : $orange   ;
+$alert      : $red-800  ;   
+$alert-sub  : $red-200  ;
+$success    : $green    ;
+$info       : $blue-800 ;
+$darken     : $gray-400 ;
+
+// Body  ----
+$body-bg      : $main ;
+$body-color   : $black;
+$footer-bg    : $gray-400;
+$footer-color : $gray-900;
+
+// Links ----
+$link-color             : $info     ;
+$link-decoration        : none     ;
+$link-hover-color       : $lightup ;
+$link-hover-decoration  : underline;
+$link-visited-color     : $body-color;
+$link-pseudo-content    : ">>"     ;
+
+// alert 
+$alert-bg-color         : $alert-sub;
+$alert-font-color       : $alert;
+$alert-border-color     : $red-300;
+
+// success
+$success-bg-color         : $green-200;
+$success-font-color       : $green;
+$success-border-color     : $green-400;
+
+// info
+$info-bg-color         : $blue-200;
+$info-font-color       : $blue-800;
+$info-border-color     : $blue-700;
+
+// sub
+$sub-bg-color         : $gray-200;
+$sub-font-color       : $sub;
+$sub-border-color     : $gray-500;
+
+// Typography ----
+//
+// Font, line-height, and color for body text, headings, and more.
+$font-family-base: 'Noto Sans TC', sans-serif;
+
+$font-size-base  : 1em                  ;
+$font-size-lg    : $font-size-base * 1.25;
+$font-size-sm    : $font-size-base * .875;
+$icon-size-base  : 2rem;
+
+$line-height-base: 1.5  ;
+$line-height-lg  : 2    ;
+$line-height-sm  : 1.25 ;
+
+$font-weight-base   : 400       ;
+$font-weight-bold   : 700    ;
+$font-weight-bolder : bolder    ;
+
+$h1-font-size:                $font-size-base * 2.5 ;
+$h2-font-size:                $font-size-base * 2 ;
+$h3-font-size:                $font-size-base * 1.75 ;
+$h4-font-size:                $font-size-base * 1.5 ;
+$h5-font-size:                $font-size-base * 1.25 ;
+$h6-font-size:                $font-size-base ;
+
+$footer-font-size  : $font-size-sm;
+
+// transition 
+$transition-base: all .2s;
+
+// HTML box default ----
+//
+// Define common padding and border radius sizes and more.
+$border-width : 1px;
+$border-color : $sub;
+$border-radius: 5px ;
+
+$box-shadow   : 5px 5px 10px 0 $sub;
+
+$padding-horizontal : 20px;
+$padding-horizontal-sm : 10px;
+$padding-vertical   : 10px;
+
+$space-horizontal : 20px;
+$space-vertical   : 10px;
+
+$block-list-padding : $padding-vertical $padding-horizontal ;
+
+
+
+$gutter     : 10px;
+$cols       : 12; // 
+$col-width  : 100px; //
+$container-width-lg : 1440px ; // ($col-width + $gutter*2)*$cols;
+$container-width-md :  960px;
+$container-width-sm :  540px;
+
+$nav-line-height: 50px;
+$nav-height   : $nav-line-height + $gutter*2;
+$nav-bg-hover-color : $sub;
+
+$footer-height : 36px;
+
+$z-index-top   : 10000;
+
+// Paragraph----
+
+// Breakpoints & Container ----
+// Grid columns ----
+
+
+// Tables ----
+//
+// Customizes the `.table` component with basic values, each used across all table variations.
+
+// Buttons + Forms ----
+
+// zindex ----
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+// Components each setting
+
+// Component : block
+
+$block-padding-horizontal : 20px;
+$block-padding-vertical   : 10px;
+//$block-title-size         : $h4-font-size;
+$block-title-sub-size     : $font-size-sm;
+$block-title-sub-color    : $sub;
+$block-title-icon-size    : $icon-size-base;
+
+$block-body-font-size     : $font-size-base;
+
+$block-foot-font-size     : $font-size-sm;
+$block-foot-font-color    : $sub;
+
+// Component : menu
+
+$menu-side-width : 100px;
+
+
+// Component : bs4 - Cards
+
+$card-spacer-y:                     .75rem !default;
+$card-spacer-x:                     1.25rem !default;
+$card-border-width:                 1px;  //$border-width !default;
+$card-border-radius:                5px;  //$border-radius !default;
+$card-border-color:                 $sub; //rgba($black, .125) !default;
+$card-inner-border-radius:          5px;  //subtract($card-border-radius, $card-border-width) !default;
+$card-cap-bg:                       $black ;   //rgba($black, .03) !default;
+$card-cap-color:                    null !default;
+$card-height:                       null !default;
+$card-color:                        null !default;
+$card-bg:                           $contrast; //$white !default;
+
+$card-img-overlay-padding:          1.25rem !default;
+
+$card-group-margin:                 $gutter;  //$grid-gutter-width / 2 !default;
+$card-deck-margin:                  10px ; //$card-group-margin !default;
+
+$card-columns-count:                3 !default;
+$card-columns-gap:                  1.25rem !default;
+$card-columns-margin:               10px ; //$card-spacer-y !default;
+
+$enable-rounded : true;
+
+// breakpoint
+//$mobile-first : false;      // min-width : max-width 
+$breakpoint-mobile : 35.5em;
+$breakpoint-pad : 48em;
+$breakpoint-screen : 64em;
+$breakpoint-screen-wide : 80em;
+
+
+$form-input-focus-outline : 2px solid $blue-200;

@@ -1,0 +1,86 @@
+
+.iconButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width : 4em;
+    height : 4em;
+    border-radius: 100%;
+    box-shadow: 0 3px 1.5px rgba(0,0,0,0.16);
+    position: relative;
+    background-color: $contrast;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+    transition : .2s;
+
+    margin : 10px 0;
+
+    .material-icons {
+        font-size: 2em;
+    }
+    &::after{
+        content : attr(data-content);
+        color : $sub;
+        font-size: 1.1em;
+        line-height: 3.6em;
+        position: absolute;
+        opacity: 0;
+        visibility: hidden;
+        top: 0;
+        height: 100%;
+        width: auto;
+        white-space: nowrap;
+        transition: .3s;
+        right: 0;
+    }
+    @include mobile{
+        width : 3.5em;
+        height : 3.5em;
+    }
+}
+
+.iconButton--showCueText{
+    &::after{
+        opacity: 1;
+        visibility: visible;
+        right: 120%;
+    }
+}
+.iconButton--lightup{
+    background-color: $lightup;
+    color : $contrast;
+    &:visited{
+        color : $contrast;
+    }
+}
+
+
+.fixButtonGroup{
+    position: fixed;
+    bottom  : 50px;
+    right   : 50px;
+    @include mobile{
+        bottom: 25px;
+        right : 25px;
+    }
+}
+.fixButtonGroup--addPlaceholder{
+    right   : 67px;
+    @include mobile{
+        right : 42px;
+    }
+    @include touch-device{
+        right : 50px
+    }
+    @include touch-device-mobile{
+        right : 25px
+    }
+}
+
+@keyframes wave{
+
+    100%{
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}

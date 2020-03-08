@@ -1,0 +1,107 @@
+extend layout.pug
+
+block insert_script_head
+    script.
+        let page_data = !{JSON.stringify(data)};
+        var option_type = !{JSON.stringify(ENUMS.TYPES)};
+        var option_city = !{JSON.stringify(ENUMS.CITY)};
+
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src='/static/javascripts/luxon.js')
+    script(src='/static/javascripts/vue-datetime.js')
+    script(src='/static/javascripts/vueMediumEditor.min.js')
+    script(src="/static/javascripts/vee-validate.full.min.js")
+    script(src="/static/javascripts/validator_setting.js")
+    
+block content
+    main#content
+        transition(name="vue_appear",appear="")
+            .container-md(style="visibility : hidden" , 
+                        :class="{'visibility-visible' : vue_mounted}",
+                        v-show="vue_mounted")
+                if error
+                    .msgBox.msgBox--alert=error
+                section.pure-g
+                    validation-observer.pure-u-1(v-slot='obs')
+                        form.block(method='post', action='/event/create/new', enctype='multipart/form-data', @submit.prevent='onSubmit($event,obs)')
+                            header.block__head
+                                i.material-icons.block__head__icon mode_edit
+                                h4.block__head__title 建立新的活動
+                            validation-provider.form__group(rules='ext:jpg,png',name='封面圖像',v-slot='vee')
+                                .form__line(:class='vee.classes')
+                                    span.form__subject 上傳封面圖像：( *.jpg , *.png )
+                                        i.material-icons(v-if='vee.passed') done
+                                    p(v-if='vee.failed').form__msg {{ vee.errors[0] }}
+                                .form__fileBox(@dragover.prevent='', @ondrop.prevent='')
+                                    #js-drag-box.form__fileBox__coverBox(:style='{top : form.cover_image_offset_y}', draggable=true, @dragstart='dragstart($event)', @drag='dragging($event)', @dragend.prevent='')
+                                        img.form__fileBox__cover(v-if='form.cover_image', :src='form.cover_image', alt='')
+                                        img.form__fileBox__cover(v-else='', :src='form.default_cover_url', alt='')
+                                    label.form__fileBox__msg
+                                        i.material-icons input
+                                        |                                 上傳封面圖像
+                                        input(@change='set_upload($event,vee.validate)', type='file', name='cover', hidden="hidden", tab-index='-1', accept='image/jpeg,image/png')
+                            input(name='cover_image_offset_y', v-model='form.cover_image_offset_y', type='text', hidden='hidden', tab-index='-1')
+
+                            section.form__body.form__body--unitSub
+                                .form__group
+                                    validation-provider(rules='min_trim:1|max_trim:50|required',name='標題',v-slot='vee') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            span.form__subject.form--required 標題：
+                                                i.material-icons(v-if='vee.passed') done
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.title', type='text', name='title')
+                                                .form__flexLine__inputBox__activeBorder
+                                            
+                                        
+                                    .form__line
+                                        span.form__subject 類型：
+                                        .form__line__inputBox
+                                            select.form__select(v-model='form.type', name='type')
+                                                each TYPE in ENUMS.TYPES
+                                                    option(value=TYPE)=TYPE
+                                            .form__line__inputBox__activeBorder
+                                    validation-observer
+                                        validation-provider(name='開始時間', rules='required|date_earlier:@結束時間,結束時間', v-slot='vee')
+                                            .form__flexLine.form__flexLine--vdatetime(:class='vee.classes') 
+                                                span.form__subject.form--required 開始： 
+                                                vue-datetime(type='datetime', v-model='form.start_time', input-class='form__input--sub', hidden-name='start_time')
+                                                
+                                                p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                                
+                                        validation-provider(name='結束時間', rules='date_later:@開始時間,開始時間', v-slot='vee')
+                                            .form__flexLine.form__flexLine--vdatetime(:class='vee.classes') 
+                                                span.form__subject 結束： 
+                                                vue-datetime(type='datetime', v-model='form.end_time', input-class='form__input--sub', hidden-name='end_time')
+                                                p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                                
+                                    .form__line
+                                        label.form__checkBlock.form__checkBlock--sub
+                                            input(type='checkbox', name='publish_status', v-model='form.publish_status')
+                                            span.form__checkBlock__content 公開
+                                    .form__line
+                                        span.form--required 地點： 
+                                        .form__line__inputBox
+                                            select.form__select(v-model='form.location', name='location')
+                                                each city in ENUMS.CITY
+                                                    option(value=city)=city
+                                            .form__line__inputBox__activeBorder
+                                    .form__group
+                                        validation-provider(rules='max_trim:1000', name="描述", v-slot='vee')    
+                                            .form__line(:class='{"form__line--invalid":vee.failed,"form__line--valid": vee.passed}') 
+                                                span.form__subject 描述：
+                                                    i.material-icons(v-if='vee.passed') done
+                                                    span(v-if='vee.valid') ( 還可輸入 {{ 1000 - form.desc_literal.trim().length }} 個字)
+                                                input(v-model='form.desc_literal',type='text', name='desc_literal', hidden='',  tab-index=-1)
+                                                p.form__msg(v-if='vee.failed') {{ vee.errors[0] }} 
+                                                    span(v-if="vee.failedRules.max") ( 超出 {{form.desc_literal.length.trim() - 1000}} 個字)
+                                            .form__line
+                                                medium-editor.block.raised.medium-editor__userCustom(:text='form.description', :options='medium.options', @edit='processEditOperation($event,vee)', custom-tag='div')
+                                        textarea(v-model='form.description', name='description', hidden='hidden', tab-index='-1')
+                                        
+                                        .form__line
+                                            button.form__flexLine__button--lightup.float-r(type='submit') 建立新活動
+
+block foot_script
+    script(src='/static/javascripts/edit_event.js')

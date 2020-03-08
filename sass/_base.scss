@@ -1,0 +1,81 @@
+/*
+ * cwTeXYen (Chinese Traditional) http://www.google.com/fonts/earlyaccess
+
+ @font-face {
+    font-family: 'cwTeXYen';
+    font-style: normal;
+    font-weight: 500;
+    src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot);
+    src: url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.eot?#iefix) format('embedded-opentype'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff2) format('woff2'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.woff) format('woff'),
+         url(//fonts.gstatic.com/ea/cwtexyen/v3/cwTeXYen-zhonly.ttf) format('truetype');
+  }
+ */
+*{
+    box-sizing: border-box;
+}
+
+html{
+    // https://stackoverflow.com/questions/17555682/height-100-or-min-height-100-for-html-and-body-elements
+    height : 100%; 
+}
+
+body {
+    display: flex;
+    //flex-direction: column;
+    min-height      : 100%;
+    background-color: $body-bg;
+    color           : $body-color;
+    font-size       : $font-size-base;
+    font-family     : $font-family-base;
+    
+}
+
+a{
+    @extend %no-pointer-touch-device;
+}
+
+p,figure {
+	margin: 0;
+}
+
+form {
+	margin-block-end: 0;
+}
+
+
+input,
+button,
+select {
+	@extend %reset-input-text;
+	padding: 10px 20px;
+}
+button, [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: none;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance:none;
+    -moz-appearance: none;
+    background-image : url(/static/images/arrow_down_black.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 1em;
+    padding-right: 30px;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+}
+
+input[type="number"] {
+	width: 120px;
+}
+
+.reset-a {
+    @extend %reset-a;
+}
+
+.reset-ul {
+	@extend %reset-ul;
+}

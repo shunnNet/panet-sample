@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+		"liveSassCompile.settings.autoprefix": [
+			"> 1%",
+			"last 2 versions",
+			"safari >= 8",
+			"firefox >= 50",
+			"chrome >= 50"
+		]
+	}
+}
+}

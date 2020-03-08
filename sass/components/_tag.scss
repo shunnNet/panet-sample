@@ -1,0 +1,34 @@
+.tag {
+    display: inline-block;
+    
+    margin: 0 5px 5px 0;
+    //line-height: 25px;
+    padding: 0 8px 0 8px;
+  
+    border-radius: 5px;
+    background-color: lightseagreen;
+    vertical-align: bottom;
+}
+.tag:last-child {
+    margin: 0 0 5px 0;
+}
+
+.tag--sub{
+    background:none;
+    border : 1px solid $sub;
+    color : $sub;
+    &:hover{
+        border-color : $lightup;
+        color : $lightup;
+    }
+}
+
+.tag--lightup{
+    background:none;
+    border : 1px solid $lightup;
+    color : $lightup;
+    &:hover{
+        border-color : $lightup;
+        color : $contrast;
+    }
+}

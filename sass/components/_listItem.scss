@@ -1,0 +1,38 @@
+
+.listItemCard{
+    display: inline-block;
+    width : 100%;
+    position: relative;
+    text-align: center;
+    line-height: 4;
+    font-weight: bolder;
+    transition: .2s;
+    color: $contrast;
+
+    &:visited{
+        color: $contrast;
+    }
+    
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+
+    &:hover{
+        color: $lightup;
+    }
+    &__bg{
+        position: absolute;
+        top: 0;
+        left:0;
+        bottom: 0;
+        right: 0;
+        filter : brightness(0.5);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+    }
+    &__title{
+        position: relative;
+        z-index: 2;
+    }
+}

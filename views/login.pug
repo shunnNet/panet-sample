@@ -1,0 +1,90 @@
+extend layout.pug
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/grecaptcha.js")
+
+block content
+    
+    script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"', async, defer,  onerror="onerrorCallback()")
+    #fb-root
+    script(async='', defer='', crossorigin='anonymous', src='https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v5.0&appId=757780641301897&autoLogAppEvents=1')
+    main#content
+        section.container-sm.max-width-400      
+            .pure-g
+                .pure-u-1
+                    note-book(default_block="local",
+                              :note_blocks="noteBlocks"
+                              book_theme="contrast")
+                        
+                        template(v-slot:local='')       
+                            form.block.bg-contrast(action='/account/login' method='post', @submit.prevent = "submitIfPassed(event)")
+                                select(name="type" hidden='hidden', tab-index="-1")
+                                    option(value="normal" selected)
+                                    option(value="fb")
+                                input(type="text" name="fb_id" value="" hidden='hidden', tab-index="-1")
+                                input(type="text" name="fb_token" value="" hidden='hidden', tab-index="-1")
+                                input(type="text" name="gr" value="" hidden='hidden', tab-index="-1")
+                                header.block__head
+                                    i.material-icons.block__head__icon mode_edit
+                                    h4.block__head__title 登入
+                                if errors
+                                    for error in errors
+                                        p.msgBox.msgBox--alert=error.msg
+                                .form__body.form__body--unitSub
+                                    .form__group
+                                        .form__flexLine
+                                            span.form__subject.form--required  帳號： 
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(type='text', name='account', autocomplete='off')
+                                                .form__flexLine__inputBox__activeBorder
+                                        .form__flexLine
+                                            span.form__subject.form--required  密碼： 
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(type='password', name='password', autocomplete='off')
+                                                .form__flexLine__inputBox__activeBorder
+                                        .form__flexLine(v-if="isSoSmallSize")
+                                            div(class="g-recaptcha",
+                                                data-sitekey='6LdXWdEUAAAAADX8qqDFig7mlIN_l5KZ6nwyUAOX',
+                                                data-callback='recapCallback'
+                                                data-size="compact")
+                                        .form__flexLine(v-else)
+                                            div(class="g-recaptcha",
+                                                data-sitekey='6LdXWdEUAAAAADX8qqDFig7mlIN_l5KZ6nwyUAOX',
+                                                data-callback='recapCallback')
+                                        
+                                        .form__line
+                                            button.form__button.form__button--lightup.w-full(type='submit') 登入
+                                        
+                                        .form__line
+                                            a(href='/account/forgetpassword') 忘記密碼?
+                                            a.mg-l-10(href='/account/registry') 申請帳號
+                                            
+                                        
+                        template(v-slot:other='')
+                            form.block.bg-contrast(action='/account/login' method='post')
+                                select(name="type" hidden='', tab-index="-1")
+                                    option(value="normal" selected)
+                                    option(value="fb")
+                                input(type="text" name="fb_id" hidden='hidden', tab-index="-1")
+                                input(type="text" name="fb_token" hidden='hidden', tab-index="-1")
+                                input(type="text" name="gr" hidden='hidden', tab-index="-1")
+                                .block__head
+                                    i.material-icons.block__head__icon mode_edit
+                                    h4.block__head__title 登入
+                                if errors
+                                    for error in errors
+                                        p.msgBox.msgBox--alert=error.msg
+                                .form__body.form__body--unitSub
+                                    .form__group
+                                        .form__line 還沒開放喔
+                                        
+                                        //
+                                            .form__line
+                                                .fb-login(onclick="fb_login(event)") facebook 登入
+                       
+block foot_script
+    script(src='/static/javascripts/login.js')
+    
+
+
+

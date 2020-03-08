@@ -1,0 +1,27 @@
+.banner{
+    overflow: hidden;
+    padding : 2em 1em;
+    line-height: 1.5;
+    &__header{
+        padding : 2em 0;
+        &__title{
+            font-size : 2em;
+            font-weight: bolder;
+            letter-spacing:3px;
+            padding : 0.5em 0;
+            margin : 0;
+            
+        }
+        &__desc{
+            font-size : 1.2em
+        }
+    }
+    &__body{
+        padding : 1em 0;
+    }
+    @include pad{
+        font-size: 0.85rem;
+    }
+}
+
+

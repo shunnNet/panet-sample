@@ -1,0 +1,175 @@
+// Breakpoint
+
+@mixin mobile {
+	@media screen and(max-width: $breakpoint-mobile) {
+		@content;
+	}
+}
+
+@mixin pad {
+	@media screen and(max-width: $breakpoint-pad) {
+		@content;
+	}
+}
+
+@mixin screen {
+	@media screen and(max-width: $breakpoint-screen) {
+		@content;
+	}
+}
+
+@mixin screen-wide {
+	@media screen and(max-width: $breakpoint-screen-wide) {
+		@content;
+	}
+}
+
+// device
+
+@mixin touch-device{
+    @media (pointer: "coarse"){
+        @content;
+    }
+}
+@mixin touch-device-mobile{
+    @media screen and (max-width: $breakpoint-mobile) and (pointer: "coarse"){
+        @content;
+    }
+}
+
+// util
+
+%no-pointer-touch-device{
+    @include touch-device{
+        cursor: none; // for Android not show blue background
+        -webkit-tap-highlight-color : transparent; // for iOS not show gray background when touch
+    }
+}
+
+@mixin hide-text{
+    
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    
+}
+
+@mixin ul--liInline {
+	& > li {
+		display: inline-block;
+	}
+}
+
+@mixin block_a($a_color, $h_color, $h_bg) {
+	display: block;
+	text-decoration: none;
+	color: $a_color;
+}
+
+@mixin bg-font-color($bg, $font) {
+	background-color: $bg;
+	color: $font;
+}
+
+@mixin form__input--style($bd-color, $bd-color-focus,$color:inherit) {
+    color        : $color;
+    border-bottom: 1px solid $bd-color;
+
+	&:focus {
+		border-bottom-color: $bd-color-focus;
+	}
+}
+
+%spreadBorder__horizontal{
+    content: '';
+    pointer-events: none;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 50%;
+    display: block;
+    height: 100%;
+    visibility: hidden;
+    transition : .2s;
+    
+}
+
+%spreadBorder__vertical{
+    content: '';
+    pointer-events: none;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    left : 0;
+    display: block;
+    width: 100%;
+    visibility: hidden;
+    transition : .2s;
+   
+}
+
+
+%form__input--base{
+    border-bottom: 1px solid $sub;
+}
+
+
+
+// reset
+
+%reset-a {
+	text-decoration: none;
+	color: inherit;
+	&:visited {
+		text-decoration: none;
+		color: inherit;
+	}
+}
+
+%reset-ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+%reset-input-text {
+	background: none;
+	border: none;
+	&:focus {
+		outline: 0;
+	}
+}
+
+%text-ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+%ul--liInline {
+	& > li {
+		display: inline-block;
+	}
+}
+
+
+/* 
+    ------------------------------------from Bootstrap 4 -------------------------------------------------------------------
+
+*/
+// Image Mixins
+// - Responsive image
+
+// Responsive image
+//
+// Keep images from scaling beyond the width of their parents.
+
+@mixin img-fluid {
+	// Part 1: Set a maximum relative to the parent
+	max-width: 100%;
+	// Part 2: Override the height to auto, otherwise images will be stretched
+	// when setting a width and height attribute on the img element.
+	height: auto;
+}

@@ -1,0 +1,516 @@
+
+
+.form__subTitle {
+	font-size: $font-size-base;
+}
+
+%form__button__init {
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+	border-radius: 10px;
+	transition: 0.2s;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.form__body {
+	padding-left: 20px;
+	
+	input:first-child,
+	button:first-child,
+	select:first-child {
+		margin-left: 0px;
+	}
+}
+
+.form__body--unitSub {
+	input,
+	select {
+		@include form__input--style($bd-color: $sub, $bd-color-focus: $lightup);
+	}
+}
+
+.form__group {
+	padding: 10px 0px;
+}
+
+.form__line {
+	display: block;
+	padding: 5px 0px;
+}
+.form__line__submit {
+	float: right;
+	padding: 5px 0px;
+}
+
+.form__flexLine {
+	display: flex;
+	flex-flow: row wrap;
+	padding: 5px 0px;
+	input {
+		flex: 1 1 0;
+        min-width: 0px;
+        width : 0px; // NOTE : Firefox must specify width to be flex basis maybe...
+	}
+
+	button {
+		min-width: 100px;
+	}
+
+	@include pad {
+		flex-flow: column nowrap;
+		select {
+			flex: 1 0 auto;
+        }
+        input{
+            width : 100%;
+        }
+    }
+    //https://stackoverflow.com/questions/29732575/how-to-specify-line-breaks-in-a-multi-line-flexbox-layout
+    .form__msg{
+        width : 100%;
+    }
+}
+
+.form__flexLine--vdatetime{
+    .vdatetime{
+        display: flex;
+        flex : 1 0 0;
+    }
+}
+
+
+.form__subject {
+	display: inline-block;
+	flex: 0 0 auto;
+    padding: 10px 0px;
+    .material-icons{
+        vertical-align: bottom;
+    }
+}
+
+
+.form__flexLine__input--sub {
+    @include form__input--style($bd-color: $sub, $bd-color-focus: $lightup);
+}
+
+
+.form__flexLine__button--lightup {
+	@extend %form__button__init;
+	background-color: $orange-500;
+	&:hover ,&:focus{
+		background-color: $lightup;
+		color: $white;
+	}
+	&:active {
+		background-color: $white;
+		color: $lightup;
+    }
+    .material-icons{
+        vertical-align: middle;
+    }
+
+}
+
+.form__flexLine__button--sub {
+    @extend %form__button__init;
+    
+	border: 1px solid $sub;
+	color: $sub;
+	&:hover {
+		background-color: $sub;
+		color: $contrast;
+    }
+    .material-icons{
+        vertical-align: middle;
+    }
+}
+
+.form__button {
+	@extend %form__button__init;
+}
+
+.form__button--lightup {
+	background-color: $orange-500;
+	&:hover {
+		background-color: $lightup;
+		color: $white;
+	}
+	&:active {
+		background-color: $white;
+		color: $lightup;
+	}
+}
+
+// FIX : divide style and structure
+
+
+.form__checkBlock {
+	display: inline-block;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+
+	.form__checkBlock__content {
+		display: block;
+		padding: 10px 20px;
+		user-select: none;
+	}
+
+	.form__checkBlock__content::before {
+		content: "不";
+	}
+
+	[type="checkbox"] {
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+		&:checked {
+			~ .form__checkBlock__content::before {
+				content: "";
+            }
+            
+        }
+        &:hover , &:focus{
+            ~ .form__checkBlock__content {
+                outline : $form-input-focus-outline;
+            }
+        }
+        
+	}
+}
+.form__checkBlock--sub {
+	.form__checkBlock__content {
+        border          : 1px solid $sub;
+		background-color: $body-bg;
+		color: $sub;
+	}
+	[type="checkbox"]:checked {
+		~ .form__checkBlock__content {
+            border          : 0;
+			background-color: $lightup;
+            color: $contrast;
+        }
+	}
+}
+
+.form__checkBlock--contrast {
+	.form__checkBlock__content {
+		background-color: $body-bg;
+		color: $sub;
+	}
+	[type="checkbox"]:checked {
+		~ .form__checkBlock__content {
+			background-color: $lightup;
+			color: $contrast;
+		}
+	}
+}
+%cover__setting{
+    padding: 20% 0;
+}
+
+.coverBox{
+    @extend %cover__setting;
+    display: block;
+	position: relative;
+	overflow: hidden;
+    text-align: center;
+    .coverBox__coverBox {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		top: 0;
+    }
+    .coverBox__coverBox__coverImg {
+		position: relative;
+		z-index: -1;
+		width: 100%;
+    }
+    .coverBox__descBox{
+        display : block;
+        position: absolute;
+
+        z-index : 5;
+		left: 0;
+        bottom: 0;
+        color : $contrast;
+        text-shadow: rgb(3, 3, 3) 6px -2px 4px;
+        line-height: 1.5;
+        text-align : left;
+        cursor: pointer;
+        @extend %no-pointer-touch-device;
+        width : 100%;
+        &__title{
+            @extend %text-ellipsis;
+            font-size: 2em;
+            padding-left : 20px;
+            padding-bottom: 10px;
+            margin : 0;
+            @include pad {
+                font-size : 1.5em;
+            }
+            @include mobile {
+                font-size : 1.2em;
+            }
+        }
+        &__desc{
+            @extend %text-ellipsis;
+            padding-left : 20px;
+            padding-bottom: 10px;
+            @include pad {
+                display : none;
+            }
+        }
+        &:hover {
+            color : $lightup;
+        }
+    }
+}
+
+
+
+.form__fileBox__img{
+    height : 100%;
+    width : 100%;
+    object-fit: contain;
+}
+.form__fileBox__youtube{
+    width : 100%;
+    height : 100%;
+}
+
+.form__fileBox {
+    @extend %cover__setting;
+	display: block;
+	position: relative;
+	overflow: hidden;
+	text-align: center;
+
+    [type="file"] {
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+	.form__fileBox__coverBox {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		top: 0;
+		cursor: grab;
+    }
+
+
+	.form__fileBox__cover {
+		position: relative;
+		z-index: -1;
+		width: 100%;
+	}
+	
+    .form__fileBox__msg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -100px;
+        margin-top: -25px;
+}
+
+}
+
+
+
+.form__fileBox__msg {
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+    display: inline-block;
+    color: $sub;
+    outline: 5px dashed $sub;
+    user-select: none;
+    transition: 0.2s;
+    line-height: 50px;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+    .material-icons {
+        vertical-align: text-bottom;
+    }
+    &:hover {
+        color: $lightup;
+        outline: 5px dashed $lightup;
+    }
+
+}
+
+
+.form__uploadMediaBox{
+    display: block;
+	position: relative;
+    text-align: center;
+    
+}
+
+
+.medium-editor__userCustom {
+	line-height: 1.5;
+	min-height: 300px !important;
+}
+
+.medium-editor-action {
+	background-color: $contrast;
+	&:hover {
+		background-color: $lightup;
+		color: $contrast;
+	}
+}
+.medium-editor-toolbar-form {
+	background-color: $contrast;
+}
+
+.medium-editor-toolbar-anchor-preview {
+	background-color: $lightup;
+	color: $black;
+}
+
+.medium-editor-button-active {
+	background-color: $lightup;
+	color: $contrast;
+}
+
+.form__radioItem {
+	display: inline-block;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+
+	.form__radioItem__content {
+		display: block;
+		padding: 10px 20px;
+		user-select: none;
+	}
+    [type="radio"]{
+		position: absolute;
+		opacity: 0;
+		width: 0;
+        height: 0;
+    }
+}
+
+.list-item{
+    color:black;
+}
+
+
+.form__radioItem--sub{
+    &:hover{
+        color : $lightup;
+    }
+    [type="radio"]:checked{
+        ~ .form__radioItem__content {
+            @include bg-font-color($lightup,$contrast)
+        }
+    }
+}
+
+.form__msg{
+    padding : 0.8em 10px;
+    font-size : $font-size-sm;
+}
+
+.form--required::before{
+    content :"*";
+    color : red;
+}
+
+.form__line--invalid{
+    color : $alert-font-color;
+    input,select {
+        color :  $alert-font-color;
+        border-color : $alert-font-color;
+    }
+    
+    .form__msg{
+        @include bg-font-color($bg:$alert-bg-color,
+                                $font:$alert-font-color)
+    }
+
+}
+
+.form__line--valid{
+    color : $success-font-color;
+    input,select {
+        color :  $success-font-color;
+        border-color : $success-font-color;
+    }
+    .form__msg{
+        @include bg-font-color($bg:$success-bg-color ,
+                                $font:$success-font-color)
+    }
+
+}
+
+
+.form__flexLine__inputBox{
+    display: inline-flex;
+    position: relative;
+    .form__input:focus , .form__select:focus{
+        &+.form__flexLine__inputBox__activeBorder{
+            left  : 0;
+            right : 0;
+            
+            visibility: visible;
+        }
+    }
+}
+.form__flexLine__inputBox__activeBorder{
+    @extend %spreadBorder__horizontal;
+    border-bottom: 2px solid $lightup;
+}
+
+
+.form__line__inputBox{
+    display: inline-block;
+    position: relative;
+    .form__input:focus , .form__select:focus{
+        &+.form__line__inputBox__activeBorder{
+            left  : 0;
+            right : 0;
+            visibility: visible;
+        }
+    }
+    @include mobile {
+        display: block;
+        .form__input ,.form__select{
+            width: 100%;
+        }
+    }
+}
+.form__line__inputBox__activeBorder{
+    @extend %spreadBorder__horizontal;
+    border-bottom: 2px solid $lightup;
+}
+
+
+.form__input, .form__select{
+    @extend %form__input--base;
+}
+
+.form__input--sub {
+	@include form__input--style($bd-color: $sub, $bd-color-focus: $lightup);
+}
+
+.form__input--contrast {
+    @include form__input--style($bd-color: $contrast, 
+                                $bd-color-focus: $lightup,
+                                $color   : $contrast,);
+}
+
+.form__select--contrast{
+    background-image : url(/static/images/arrow_down_white.png);
+    @include form__input--style($bd-color: $contrast, 
+                                $bd-color-focus: $lightup,
+                                $color   : $contrast,);
+    option {
+        color : $body-color;
+    }
+    
+}

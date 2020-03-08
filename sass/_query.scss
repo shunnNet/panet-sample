@@ -1,0 +1,245 @@
+.card {
+    display: flex;
+    flex-flow: column;
+	position: relative;
+	text-decoration: none;
+    color: $black;
+    height : 100% ; // make each card's height equal, with 彈性 content.
+    border-radius: 10px;
+    line-height: 1.5;
+	.card__imageContainer {
+		position: relative;
+        overflow: hidden;
+        border-radius: 10px 10px 0 0;
+	}
+
+	.card__image,
+	.card__imageFilter {
+		box-sizing: content-box;
+		transition: 0.3s;
+	}
+
+	&:hover {
+		.card__image,
+		.card__imageFilter {
+			transform: scale(1.2);
+        }
+    }
+    @include touch-device{
+        &:hover {
+            .card__image,
+            .card__imageFilter {
+                transform: scale(1);
+            }
+        }
+    }
+	.card__image {
+		position: absolute;
+		width: 100%;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+		top: 0;
+		padding-bottom: 80%;
+	}
+	.card__imageFilter {
+		width: 100%;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		filter: opacity(0.5);
+		padding-bottom: 80%;
+	}
+
+	.card__content {
+        padding: 20px 20px;
+        font-size  : 1rem;
+        line-height: 2em;
+        flex : 1 0 0;
+        font-weight: $font-weight-bold;
+    }
+    .card__head {
+        padding : 10px 0;
+        .card__title {
+            display: inline-block;
+            font-size: 1.25em;
+            font-weight: bolder;
+            padding-right : 10px;
+            margin : 0;
+        }
+        .card__head__sub{
+            color : $sub;
+            @include mobile{
+                display: block;
+            }
+        }
+    }
+
+    .card__content__subject{
+        vertical-align: top;
+        display: inline-block;
+        width : 100px;
+    }
+
+    .card__foot {
+        font-size: 0.9em;
+        padding: 10px 20px;
+        border-top: 1px solid $sub;
+        color : $sub;
+        
+        .card__foot__content {
+            display: inline-block;
+            padding-right : 10px;
+            .card__foot__icon{
+                vertical-align: text-top;
+                padding-right : 5px;
+            }
+        }
+    }
+}
+
+.photo{
+    border-radius: 50%;
+    display: inline-block;
+}
+.photo--sm{
+    width : 30px;
+    height: 30px;
+}
+
+.card__ul{
+    margin-top:0;
+    margin-bottom: 0;
+}
+
+.card__info {
+    display: flex;
+    flex-flow: column;
+    box-sizing: border-box;
+    height : 100%;
+    text-decoration: none;
+    color : $black;
+    line-height: 1.5;
+    padding: 20px 20px;
+    border-radius: 10px;
+    
+    .card__head {
+        .card__head__photo{
+            margin-right: 5px;
+            vertical-align: bottom;
+        }
+
+        .card__title {
+            padding-right : 10px;
+            font-size: $h5-font-size;
+            font-weight: $font-weight-bold;
+            //@extend %text-ellipsis;
+        }
+        .card__head__sub{
+            color : $sub;
+            @include mobile{
+                display: block;
+            }
+        }
+    }
+
+	.card__content {
+        padding: 10px 0px;
+        line-height: 2;
+        font-weight: $font-weight-bold;
+        flex : 1 0 0;
+    }
+    
+	.card__content__subject {
+        vertical-align: top;
+        display: inline-block;
+        width : 100px;
+    }
+    .card__content__desc{
+        display: inline-block;
+    }
+
+	.card__foot {
+		//@extend %text-ellipsis;
+		padding-top: 10px;
+		border-top: 1px solid $sub;
+		font-size: 0.9em;
+        color : $sub;
+		.card__foot__content {
+            display: inline-block;
+            padding-right : 10px;
+            .card__foot__icon{
+                vertical-align: text-top;
+                padding-right : 5px;
+            }
+		}
+	}
+
+}
+
+#filter-sticky {
+	position: static;
+	position: sticky;
+	top: 70px;
+	z-index: 100;
+
+}
+
+.radios {
+	position: relative;
+    display: inline-block;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+    width :50px;
+    
+	&:hover {
+		.material-icons {
+			color: orange;
+		}
+	}
+
+	[type="radio"] {
+		position: absolute;
+		opacity: 0;
+        width :0;
+        height:0;
+		&:checked {
+			~ .checkmark > .material-icons {
+				color: orange;
+			}
+		}
+	}
+	.checkmark {
+        width :50px;
+        height:50px;
+		display: inline-block;
+		text-align: center;
+
+		.material-icons {
+            vertical-align: sub;
+			line-height: 50px;
+			font-size: 2rem;
+		}
+	}
+}
+
+#view-mode {
+	
+	float: right;
+    user-select: none;
+    
+	.checkmark {
+		font-size: 2rem;
+	}
+}
+
+
+
+#js-adv-opts {
+	transition: 0.3s;
+	&.show {
+		@include pad {
+			display: block;
+		}
+	}
+}

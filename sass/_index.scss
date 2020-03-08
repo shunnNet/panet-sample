@@ -1,0 +1,191 @@
+
+
+@keyframes sparkle {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.pseudoSearchBox {
+	display: flex;
+	width: 80%;
+	margin: auto;
+	&__inputBox {
+		flex: 1;
+		border-bottom: 1px solid $contrast;
+		padding: 10px 20px;
+		font-size: 1.1em;
+		&__sparkle {
+			height: 1.5em;
+			display: inline-block;
+			border: 3px solid $contrast;
+			animation: sparkle 0.8s ease infinite;
+			vertical-align: bottom;
+			margin-left: 3px;
+		}
+	}
+}
+
+.pseudoUserCard {
+	display: flex;
+	border: 1px solid $contrast;
+	border-radius: 20px;
+	width: 100%;
+	padding: 20px 30px;
+	margin: 40px 0;
+
+	&__photo {
+		margin-right: 50px;
+		width: 75px;
+		height: 75px; // give a height value will prevent stretch height by flexbox.
+		border: 1px solid $contrast;
+		border-radius: 50%;
+	}
+	&__content {
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
+		font-size: 1.1em;
+		&__title {
+			font-size: 1.1em;
+			padding: 0.5em 0;
+			font-weight: $font-weight-bolder;
+		}
+	}
+	@include mobile {
+		flex-direction: column;
+		align-items: center;
+		&__photo {
+			display: none;
+		}
+	}
+}
+
+.logoBanner {
+	padding: 50px 0 0 0;
+	h1 {
+		margin: 0;
+	}
+	&__logo {
+		max-width: 600px;
+		width: 100%;
+	}
+}
+
+.fakeSearch__hide {
+	opacity: 0;
+	transform: translateX(-300px);
+}
+
+.workCards__hide {
+    transform: translateY(200px);
+    opacity: 0;
+}
+
+.ideaBanner__hide {
+	.banner__header__title,
+	.banner__header__desc {
+		opacity: 0;
+		transform: translateX(-300px);
+	}
+	.banner__body {
+		opacity: 0;
+	}
+}
+
+.mediaBanner__hide {
+	opacity: 0;
+}
+
+.eventCards__hide {
+	.listItemCard {
+		opacity: 0;
+		transform: translateX(-100px);
+	}
+}
+.nav--indexPage_preset {
+	transition: 0.4s;
+	opacity: 1;
+}
+.nav--indexPage {
+	background: black !important;
+    color: $contrast !important;
+    
+	.menu__query {
+		background: black !important;
+	}
+	.menu__link {
+        background-color: black !important;
+		color: $contrast;
+    }
+    .menu__text {
+		color: $contrast;
+	}
+	.raised {
+		box-shadow: unset !important;
+	}
+	.form__select {
+		background-image: url(/static/images/arrow_down_white.png);
+		option {
+			color: $body-color;
+		}
+	}
+	.form__select,
+	.form__input {
+		color: $contrast;
+		border-bottom-color: $contrast;
+	}
+	@include pad {
+		.menu--horizontal__mobile {
+			background: black !important;
+		}
+	}
+}
+
+.backgroundFilter {
+    position: fixed;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	top: 0;
+	left: 0;
+	right: 0;
+	height : 100%; //need replace by js
+	z-index: -1;
+	filter: brightness(0.3);
+}
+.backgroundFilter--addPlaceholder {
+    background-position: right calc(50% + 8px) top 50%;
+    @include touch-device {
+		background-position: center;
+	}
+}
+
+
+.backgroundImageStack {
+	background-attachment: scroll;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+    width: 100%;
+    //transition: transform .2s;
+
+	&.far {
+		filter: brightness(0.6);
+	}
+
+	&.front {
+		filter:blur(5px) brightness(0.8); 
+	}
+}
+
+#js-background_normal_line,#js-welcome_banner{
+    background-color: $body-bg;
+}

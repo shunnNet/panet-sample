@@ -1,0 +1,349 @@
+extend layout.pug
+
+block page_head
+    meta(name="description" content="本網站僅供學習用途")
+    meta(property="og:title", content= '表藝人 - 搜尋' )
+    meta(property="og:url", content=data.originalUrl)
+    meta(property="og:description", content="本網站僅供學習用途")
+    meta(property="og:image", content=hostname+"/static/images/表藝人-01.png")
+    
+    script.
+        const ENUMS = !{JSON.stringify(ENUMS)};
+        const originalUrl = !{JSON.stringify(data.originalUrl)};
+        let submitted = !{JSON.stringify(data.body)};
+        let hasNextDatas = !{JSON.stringify(data.result.length > 0 )};
+        let queryResult = !{JSON.stringify(data.result)};
+        
+    link(href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css" , rel="stylesheet")
+    script(src="/static/javascripts/vue.min.js")
+    script(src="https://unpkg.com/vue-multiselect@2.1.0")
+    script(src="https://unpkg.com/vuejs-datepicker")
+    script(src="/static/javascripts/luxon.js")
+    script(src="/static/javascripts/vue-datetime.js")
+    script(src="/static/javascripts/moment-with-locales.min.js")
+
+block content
+    main#content
+        #curtain.f-item-center(:class="{vue_dispear : isMounted}")
+            .loadingio-spinner-eclipse
+                .ldio
+                    div
+        section.container-md.pos-relative.z-1000 
+            .pure-g
+                .pure-u-1
+                    form.block.raised(method='get' action='/query' autocomplete="off")
+                        .block__head
+                            i.material-icons.block__head__icon search
+                            h4.block__head__title 搜尋
+                        .form__body
+                            .form__group
+                                .form__flexLine.font-size-lg
+                                    .form__flexLine__inputBox.mg-b-10-pad
+                                        select.form__select(v-model='search_field' name='field')
+                                            option(value='user') 找人才
+                                            option(value='idea') 找點子
+                                            option(value='event') 找活動
+                                            option(value='work') 找工作
+                                            option(value='media') 找影音
+                                        .form__flexLine__inputBox__activeBorder
+                                    .form__flexLine__inputBox.flex-1.pos-relative.mg-l-10.mg-l-0-pad.mg-b-10-pad
+                                        input.form__input.flex-1(name='qs' type='text' placeholder='輸入要尋找的關鍵字' v-model="form_body[search_field].qs")
+                                        .form__flexLine__inputBox__activeBorder
+                                    button.form__flexLine__button--lightup.mg-l-10.mg-l-0-pad(type='submit')
+                                        i.material-icons search
+                            #js-adv-opts.d-none-pad
+                                .form__group
+                                    .form__line
+                                        p.fw-bolder 進階篩選：
+                                    component.font-size-sm(:is='search_option[search_field].template_id', 
+                                                           :options='search_option[search_field]', 
+                                                           :form_body='form_body[search_field]')
+                            #js-show-adv-opts.button--sub.d-none.d-block-pad(onclick='toggleAdvOpts(event)') 顯示更多選項
+        #filter-sticky.container-md
+            .pure-g
+                .pure-u-1.pd-0
+                    .block.pd-0.raised(style='overflow: hidden;')
+                        form#view-mode(autocomplete='off')
+                            label.radios(title='卡片檢視')
+                                input(v-model='view_mode' type='radio' name='test' value='card' , checked='checked')
+                                span.checkmark
+                                    i.material-icons view_module
+                            label.radios(title='清單檢視')
+                                input(v-model='view_mode' type='radio' name='test' value='card__info')
+                                span.checkmark
+                                    i.material-icons view_headline
+        section.container-lg
+            .pure-g
+                transition(v-for='data in datas' name="vue_slide_up" appear='' mode='out-in')
+                    case field
+                        when "user"
+                            card(v-if=" view_mode == 'card' "
+                                :cover_img="data.cover_image"
+                                :link_url='"/user/" + data._id', 
+                                :key=" 'card_' + data._id ")
+                                template(v-slot:body="")
+                                    .card__head
+                                        h5.card__title  {{data.name}} 
+                                        span.card__head__sub {{ data.now_job }}
+                                    p.text-ellipsis(v-if='data.area.length > 0')
+                                        span.card__content__subject 活動區域：
+                                        span.tag.tag--sub(v-for='( area, i ) in data.area.slice(0,2)'
+                                                 :class="{'d-none-phone' : (i > 0)}")  {{ area }} 
+
+                                    p(v-if='data.skill.length > 0')
+                                        span.card__content__subject 技能：
+                                        span.tag(v-for='( skill, i ) in data.skill.slice(0,5)'
+                                                 :class="{'d-none-phone' : (i > 2)}")  {{ skill }}
+
+                                template(v-slot:footer="")
+                                    span.card__foot__content
+                                        i.card__foot__icon.material-icons list
+                                        | 影音： {{data.medias.length}}
+                                    span.card__foot__content
+                                        i.card__foot__icon.material-icons list
+                                        | 經歷： {{data.experience.length}}
+
+                            card__info(v-if=" view_mode == 'card__info' ", 
+                                :link_url='data.page_url', 
+                                :key="'card__info_' + data._id")
+                                template(v-slot:header)
+                                    img.card__head__photo.photo.photo--sm(:src='data.cover_image', :alt='data.name')
+                                    span.card__title {{ data.name }} 
+                                    span.card__head__sub {{ data.now_job }}
+                                template(v-slot:body="")
+                                    p(v-if='data.sex')
+                                        span.card__content__subject 性別：
+                                        span {{ data.sex }}
+                                    p(v-if='data.birthday')
+                                        span.card__content__subject 年齡：
+                                        span {{ moment().diff(data.birthday,'years') }}
+                                    p(v-if='data.area.length > 0')
+                                        span.card__content__subject 活動區域：
+                                        span.tag.tag--sub(v-for='( area, i ) in data.area.slice(0,3)'
+                                                 :class="{'d-none-phone' : (i > 0)}")   {{ area }} 
+                                    p(v-if='data.skill.length > 0')
+                                        span.card__content__subject 技能：
+                                        span.tag(v-for='( skill, i ) in data.skill.slice(0,8)'
+                                                 :class="{'d-none-phone' : (i > 2)}") {{ skill }}
+                                    p.color-sub
+                                        | {{data.desc__literal}}
+                                    p(v-if='data.experience.length > 0') 經歷：
+                                    ul.card__ul
+                                        li.color-sub(v-for='exp in data.experience.slice(0,3)')
+                                            | {{ exp }}
+                                template(v-slot:footer="")
+                                    span.card__foot__content
+                                        i.card__foot__icon.material-icons list
+                                        | 影音： {{data.medias.length}}
+                                    span.card__foot__content
+                                        i.card__foot__icon.material-icons list
+                                        | 經歷： {{data.experience.length}}
+
+                        when "event"
+                            card(v-if=" view_mode == 'card' "
+                                :cover_img="data.cover_image"
+                                :link_url='data.page_url', 
+                                :key=" 'card_' + data._id ")
+                                template(v-slot:body="")
+                                    .card__head
+                                        h5.card__title {{ data.title }}
+                                    p
+                                        span.card__content__subject 地點： 
+                                        span {{ data.location }}
+                                    p
+                                        span.card__content__subject 開始：
+                                        time(:datetime="data.start_time") {{ moment(data.start_time).format('YYYY/MM/DD HH:mm') }}
+                                    p
+                                        span.card__content__subject 結束：
+                                        time(:datetime="data.end_time") {{ moment(data.end_time).format('YYYY/MM/DD HH:mm') }}
+
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+                            card__info(v-if=" view_mode == 'card__info' ", 
+                                :link_url='data.page_url', 
+                                :key="'card__info_' + data._id")
+                                template(v-slot:header)
+                                    span.card__title {{ data.title }}
+                                    span.card__head__sub {{ data.type }}
+                                template(v-slot:body="")
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{data.owner.name}}
+                                    p
+                                        span.card__content__subject 地點： 
+                                        span {{data.location}}
+                                    p
+                                        span.card__content__subject 開始： 
+                                        time(:datetime="data.start_time")  {{ moment(data.start_time).format('YYYY/MM/DD HH:mm') }}
+                                    p
+                                        span.card__content__subject 結束： 
+                                        time(:datetime="data.end_time")  {{ moment(data.end_time).format('YYYY/MM/DD HH:mm') }}
+                                    p.color-sub {{data.desc_literal}}
+
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+
+                        when "idea"
+                            card(v-if=" view_mode == 'card' "
+                                :cover_img="data.cover_image"
+                                :link_url='data.page_url', 
+                                :key=" 'card_' + data._id ")
+                                template(v-slot:body="")
+                                    .card__head
+                                        h5.card__title {{ data.title }}
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{ data.owner.name }}
+                                    p.color-sub {{ data.desc_literal }}
+                                template(v-slot:footer="")
+                                    span.card__foot__content
+                                        i.card__foot__icon.material-icons list
+                                        | 需求： {{data.demand.length}}
+                                    br
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+                            card__info(v-if=" view_mode == 'card__info' ", 
+                                :link_url='data.page_url', 
+                                :key="'card__info_' + data._id")
+                                template(v-slot:header)
+                                    span.card__title {{ data.title }}
+                                    span.card__head__sub {{ data.type }}
+                                template(v-slot:body="")
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{ data.owner.name }}
+                                    p.color-sub {{ data.desc_literal }}
+                                    p 需求( {{data.demand.length}} )
+                                    ul.card__ul
+                                        li.color-sub(v-for='demand in data.demand.slice(0,3)')
+                                            | {{demand.name}} / {{demand.count}}名
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time") 
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新: {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+
+                        when "work"
+                            card(v-if=" view_mode == 'card' "
+                                :cover_img="data.cover_image"
+                                :link_url='data.page_url', 
+                                :key=" 'card_' + data._id ")
+                                template(v-slot:body="")
+                                    .card__head
+                                        h5.card__title {{ data.title }}
+                                    p
+                                        span.card__content__subject 工作地點：
+                                        span {{ data.location }}
+                                    p
+                                        span.card__content__subject 開始：
+                                        time(:datetime="data.start_time") {{ moment(data.start_time).format('YYYY/MM/DD HH:mm') }}
+                                    p
+                                        span.card__content__subject 結束：
+                                        time(:datetime="data.start_time") {{ moment(data.end_time).format('YYYY/MM/DD HH:mm') }}
+                                    p
+                                        span.card__content__subject 需求( {{data.demand.length}} )
+                                    ul.card__ul
+                                        li.color-sub(v-for='demand in data.demand.slice(0,3)')
+                                            | {{demand.name}} / {{demand.count}}名 / 每 {{demand.per}} {{demand.form}} {{demand.per_amount}}元 / 共 {{demand.total_period}} 時段
+                                    
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+                            card__info(v-if=" view_mode == 'card__info' ", 
+                                :link_url='data.page_url', 
+                                :key="'card__info_' + data._id")
+                                template(v-slot:header)
+                                    span.card__title {{ data.title }}
+                                    span.card__head__sub {{ data.type }}
+                                template(v-slot:body="")
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{data.owner.name}}
+                                    p
+                                        span.card__content__subject 工作地點：
+                                        span {{data.location}}
+                                    p
+                                        span.card__content__subject 開始：
+                                        time(:datetime="data.start_time") {{ moment(data.start_time).format('YYYY/MM/DD HH:mm') }}
+                                    p
+                                        span.card__content__subject 結束：
+                                        time(:datetime="data.start_time") {{ moment(data.end_time).format('YYYY/MM/DD HH:mm') }}
+                                    p 需求( {{data.demand.length}} )
+                                    ul.card__ul
+                                        li.color-sub(v-for='demand in data.demand.slice(0,3)')
+                                            | {{demand.name}} / {{demand.count}}名 / 每 {{demand.per}} {{demand.form}} {{demand.per_amount}}元 / 共 {{demand.total_period}}個時段
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新: {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+                        when "media"
+                            card(v-if=" view_mode == 'card' "
+                                :cover_img="data.cover_image"
+                                :link_url='data.page_url', 
+                                :key=" 'card_' + data._id ")
+                                template(v-slot:body="")
+                                    .card__head
+                                        h5.card__title {{ data.title }}
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{data.owner.name}}
+                                    p
+                                        span.card__content__subject 類型：
+                                        span {{ data.type }}
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+                            card__info(v-if=" view_mode == 'card__info' ", 
+                                :link_url='data.page_url', 
+                                :key="'card__info_' + data._id")
+                                template(v-slot:header)
+                                    span.card__title {{ data.title }}
+                                    span.card__head__sub {{ data.type }}
+                                template(v-slot:body="")
+                                    p
+                                        span.card__content__subject 建立人：
+                                        img.photo.photo--sm.v-align-bot(:src=' data.owner.user.cover_image')
+                                        span {{data.owner.name}}
+                                    p.color-sub {{data.desc_literal}}
+
+                                template(v-slot:footer="")
+                                    time.card__foot__content(:datetime="data.update_time")
+                                        i.card__foot__icon.material-icons alarm
+                                        | 最後更新： {{ moment(data.update_time).format('YYYY/MM/DD') }}
+
+            .pure-g#js-infinity-scroll
+                .pure-u-1
+                    .button__fluid--sub(v-if='hasNextDatas', @click='query()') 顯示更多
+                    .loadBox(v-else-if='hasNextDatas === null')
+                        .lds-ring
+                            div
+                            div
+                            div
+                            div
+                    .msgBox.msgBox--sub(v-else='') 已沒有結果可顯示
+            
+        nav.fixButtonGroup(style='z-index: 9998;')
+            cue0
+
+block foot_script
+    script(src='/static/javascripts/query.js')
+
+

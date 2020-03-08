@@ -1,0 +1,189 @@
+.menu {
+	-webkit-box-sizing: border-box;
+    box-sizing: border-box;
+
+}
+
+.menu--contrast{
+    @include bg-font-color($bg:$contrast,$font:$sub)
+}
+
+.menu--horizontal {
+	white-space: nowrap;
+	zoom: 1;
+	width: 100%;
+	.menu__item--hasChildren > .menu__text {
+        cursor: pointer;
+        @extend %no-pointer-touch-device;
+		&:hover {
+			color: $link-hover-color;
+			text-decoration: $link-hover-decoration;
+		}
+	}
+
+	.menu__list,
+	.menu__listRight,
+	.menu__item {
+		display: inline-block;
+	}
+	.menu__item {
+        user-select: none;
+		line-height: inherit; // follow-height
+	}
+	.menu__item--hasChildren > .menu__link:after,
+	.menu__item--hasChildren > .menu__text:after {
+		content: "\25BE";
+	}
+	.menu__children {
+		left: 0;
+		top: auto; // will auto down to parent
+		width: 100%;
+    }
+    
+}
+
+.menu--horizontal__mobile{
+
+	@include pad {
+        display: block;
+        background-color: $body-bg;
+		width: $menu-side-width; // anchor-point-width
+		.menu__list,
+		.menu__listRight,
+		.menu__item {
+			display: block; // follow-width
+		}
+		.menu__children {
+			left: 100%;
+			top: 0;
+			width: 100%;
+		}
+		.menu__item--hasChildren > .menu__link:after,
+		.menu__item--hasChildren > .menu__text:after {
+			content: "\25B8";
+		}
+
+	}
+}
+
+.menu__list,
+.menu__listRight {
+	@extend %reset-ul;
+    height: auto;
+    padding : 0px 10px;
+}
+.menu__listRight {
+	float: right;
+
+	@include pad {
+		float: initial;
+	}
+}
+
+.menu__item {
+	padding: 0;
+	margin: 0;
+	.menu__item {
+		display: block;
+	}
+}
+
+.menu__list,
+.menu__listRight,
+.menu__item {
+	position: relative;
+	.menu__children {
+		position: absolute;
+	}
+}
+
+.menu__children {
+	display: none;
+	margin: 0;
+	padding: 0;
+	z-index: 3;
+}
+
+.menu__link {
+	display: block;
+	text-decoration: none;
+	white-space: nowrap;
+    line-height: inherit;
+    padding : 0 10px;
+    color: $sub;
+
+	&:visited {
+		color: $sub;
+	}
+	&:hover {
+		color: $link-hover-color;
+		text-decoration: $link-hover-decoration;
+	}
+	&:focus {
+	}
+	.menu__icon {
+		vertical-align: text-bottom;
+	}
+}
+
+.menu__item--hasChildren:hover > .menu__children {
+	display: block;
+}
+
+.menu__fixLeft__md {
+	@include pad {
+		position: fixed;
+		transition: 0.2s left;
+		top: $nav-height;
+		left: -$menu-side-width;
+        height: 100%;
+        
+	}
+	position: static;
+}
+.show-side-menu {
+	@include pad {
+		left: 0;
+	}
+}
+
+.menu__text {
+	display: block;
+    line-height: inherit;
+    padding : 0 10px;
+	.menu__icon {
+		vertical-align: text-bottom;
+	}
+}
+.menu__tooltip {
+	display: block;
+	line-height: inherit;
+    cursor: pointer;
+    @extend %no-pointer-touch-device;
+	.menu__icon {
+		vertical-align: text-bottom;
+	}
+	&:hover {
+		color: $lightup;
+	}
+}
+
+.menu__img {
+	width: $nav-line-height - 10px;
+	height: $nav-line-height - 10px;
+	vertical-align: middle;
+}
+
+.menu__img--circle {
+	border-radius: 100%;
+}
+
+.menu__children--right {
+    @include screen {
+        right: 0;
+    }
+}
+
+.menu__flexBox{
+    display: flex;
+}

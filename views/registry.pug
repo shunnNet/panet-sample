@@ -1,0 +1,121 @@
+extend layout.pug
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/vee-validate.full.min.js")
+    script(src="/static/javascripts/validator_setting.js")
+    script(src="/static/javascripts/grecaptcha.js")
+block content
+    script(src='https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"', async, defer,  onerror="onerrorCallback()")
+    #fb-root
+        script(async='', defer='', crossorigin='anonymous', src='https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v5.0&appId=757780641301897&autoLogAppEvents=1')
+    main#content
+        section.container-sm.max-width-400      
+            .pure-g
+                .pure-u-1
+                    note-book(default_block="local",
+                              :note_blocks="noteBlocks"
+                              book_theme="contrast")
+                        template(v-slot:local='')       
+                            validation-observer(v-slot='obs')
+                                form.block.bg-contrast(action='/account/registry' method='post', autocomplete='off' ,@submit.prevent = "submitIfPassed($event,obs)") 
+                                    select(name="type" hidden="hidden", tab-index="-1")
+                                        option(value="normal" selected)
+                                        option(value="fb")
+                                    input(type="text" name="fb_id" hidden="hidden", tab-index="-1")
+                                    input(type="text" name="fb_token" hidden="hidden", tab-index="-1")
+                                    input(type="text" name="gr" hidden="hidden", tab-index="-1")
+                                    header.block__head
+                                        i.material-icons.block__head__icon mode_edit
+                                        h4.block__head__title 註冊
+                                    if errors
+                                        for error in errors
+                                            p.msgBox.msgBox--alert=error.msg
+                                    .form__body.form__body--unitSub
+                                        .form__group
+                                            validation-provider(rules='min_trim:7|max_trim:12|required',v-slot='vee', name="帳號", key='account')
+                                                .form__flexLine(:class="vee.classes")
+                                                    span.form__subject.form--required  帳號： 
+                                                    .form__flexLine__inputBox.flex-1
+                                                        input.form__input.flex-1#account(type='text', 
+                                                                                        name='account', 
+                                                                                        placeholder="設定登入用的帳號(7~12字元)",
+                                                                                        v-model='account')
+                                                        .form__flexLine__inputBox__activeBorder
+                                                    span.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            validation-observer
+                                                validation-provider(rules='required',v-slot='vee', name="密碼", key='account')
+                                                    .form__flexLine(:class="vee.classes")
+                                                        span.form__subject.form--required  密碼：
+                                                        .form__flexLine__inputBox.flex-1 
+                                                            input.form__input.flex-1#password(type='password', 
+                                                                                              name='password', 
+                                                                                              placeholder="設定登入用的密碼",
+                                                                                              autocomplete= 'off',
+                                                                                              v-model='password')
+                                                            .form__flexLine__inputBox__activeBorder
+                                                        span.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                                validation-provider(rules='required|isEqualTo:@密碼',v-slot='vee', name="再次輸入密碼", key='account')
+                                                    .form__flexLine(:class="vee.classes")
+                                                        span.form__subject.form--required  再次輸入密碼： 
+                                                        .form__flexLine__inputBox.flex-1 
+                                                            input#password_check.form__input.flex-1(type='password', 
+                                                                            name='password_check', 
+                                                                            placeholder="請再次輸入密碼",
+                                                                            autocomplete= 'off',
+                                                                            v-model= 'password_check')
+                                                            .form__flexLine__inputBox__activeBorder
+                                                        span.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            validation-provider(rules='email|required',v-slot='vee', name="Email", key='email')
+                                                .form__flexLine(:class="vee.classes")
+                                                    span.form__subject.form--required  Email： 
+                                                    .form__flexLine__inputBox.flex-1 
+                                                        input#email.form__input.flex-1(type='text', 
+                                                                name='email', 
+                                                                placeholder="系統與您聯絡用的email",
+                                                                v-model='email')
+                                                        .form__flexLine__inputBox__activeBorder
+                                                    span.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            validation-provider(rules='min_trim:2|max_trim:15|required',v-slot='vee', name="名稱", key='name')
+                                                    .form__flexLine(:class="vee.classes")
+                                                        span.form__subject.form--required  名稱： 
+                                                        .form__flexLine__inputBox.flex-1 
+                                                            input#name.form__input.flex-1(type='text', 
+                                                                   name='name', 
+                                                                   placeholder="顯示給其他使用者看的名稱(2~15字元)", 
+                                                                   v-model='name')
+                                                            .form__flexLine__inputBox__activeBorder
+                                                        span.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__line(v-if="isSoSmallSize")
+                                                div(class="g-recaptcha",
+                                                    data-sitekey='6LdXWdEUAAAAADX8qqDFig7mlIN_l5KZ6nwyUAOX',
+                                                    data-callback='recapCallback'
+                                                    data-size="compact")
+                                            .form__line(v-else)
+                                                div(class="g-recaptcha",
+                                                    data-sitekey='6LdXWdEUAAAAADX8qqDFig7mlIN_l5KZ6nwyUAOX',
+                                                    data-callback='recapCallback')
+                                            .form__line
+                                                button.form__button.form__button--lightup.w-full(type='submit') 註冊
+                        template(v-slot:other='') 
+                            form.block.bg-contrast(action='/account/registry' method='post')
+                                select(name="type" hidden="hidden", tab-index="-1")
+                                    option(value="normal" selected)
+                                    option(value="fb")
+                                input(type="text" name="fb_id" hidden="hidden", tab-index="-1")
+                                input(type="text" name="fb_token" hidden="hidden", tab-index="-1")
+                                input(type="text" name="gr" hidden="hidden", tab-index="-1")
+                                .block__head
+                                    i.material-icons.block__head__icon mode_edit
+                                    h4.block__head__title 註冊
+                                if errors
+                                    for error in errors
+                                        p.msgBox.msgBox--alert=error.msg
+                                .form__body.form__body--unitSub
+                                    .form__group
+                                        .form__line 還沒開放喔
+                            //
+                                div.fb-login(onclick="fb_login(event)") facebook 登入
+
+block foot_script
+    script(src='/static/javascripts/registry.js')
+

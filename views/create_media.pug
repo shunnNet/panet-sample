@@ -1,0 +1,110 @@
+extend layout.pug
+
+block insert_script_head
+    script.
+        let page_data = !{JSON.stringify(data)};
+        var option_type = !{JSON.stringify(ENUMS.TYPES)};
+
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/pdf.js")
+    script(src="/static/javascripts/vue-media.js")
+    script(src='/static/javascripts/vueMediumEditor.min.js')
+    script(src="/static/javascripts/vee-validate.full.min.js")
+    script(src="/static/javascripts/validator_setting.js")
+
+
+block content
+    main#content
+        transition(name="vue_appear",appear="")
+            .container-md(style="visibility : hidden" , 
+                        :class="{'visibility-visible' : vue_mounted}",
+                        v-show="vue_mounted")
+                if error
+                    .msgBox.msgBox--alert=error
+                section.pure-g.pure-g__mediaCustom
+                    validation-observer.pure-u-1.pure-u__mediaCustom(v-slot='obs')
+                        form.block(method='post', action='/media/create/new', enctype='multipart/form-data', @submit.prevent='onSubmit($event,obs)',autocomplete='off')
+                            header.block__head
+                                i.material-icons.block__head__icon mode_edit
+                                h4.block__head__title 建立新的影音
+                            .form__body.form__body--unitSub
+                                .form__group
+                                    validation-provider(rules='min_trim:1|max_trim:50|required',name='標題',v-slot='vee') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            span.form__subject.form--required 標題：
+                                                i.material-icons(v-if='vee.passed') done
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.title', type='text', name='title')
+                                                .form__flexLine__inputBox__activeBorder
+                                    .form__line
+                                        span.form__subject 類型：
+                                        .form__line__inputBox
+                                            select.form__select(v-model='form.type', name='type')
+                                                each TYPE in ENUMS.TYPES
+                                                    option(value=TYPE)=TYPE
+                                            .form__line__inputBox__activeBorder
+                                    .form__line
+                                        label.form__checkBlock.form__checkBlock--sub
+                                            input(type='checkbox', name='publish_status', v-model='form.publish_status')
+                                            span.form__checkBlock__content 公開
+                                    .form__group
+                                        .form__line
+                                            label.form__radioItem.form__radioItem--sub
+                                                input(type='radio', name='media_storage_type', v-model='form.media_storage_type', value='local')
+                                                span.form__radioItem__content 上傳檔案
+                                            label.form__radioItem.form__radioItem--sub
+                                                input(type='radio', name='media_storage_type', v-model='form.media_storage_type', value='youtube')
+                                                span.form__radioItem__content Youtube
+                                        
+                                        validation-provider(v-if="media_block === 'youtube'", rules='isYoutube|required',immediate='immediate',name='Youtube網址',v-slot='vee_youtube', key='youtube') 
+                                            .form__flexLine(:class='vee_youtube.classes')
+                                                span.form__subject.form--required
+                                                    i.material-icons(v-if='vee_youtube.passed') done
+                                                    |  貼上youtube網址
+                                                .form__flexLine__inputBox.flex-1.mg-l-10.mg-l-0-pad.mg-b-10-pad
+                                                    input.form__input.flex-1(type='text', name='youtube_url', v-model='form.youtube_url')
+                                                    .form__flexLine__inputBox__activeBorder
+                                                .button--sub.mg-l-10.mg-l-0-pad(@click='preview_youtube')
+                                                    | 預覽
+                                                p(v-if='vee_youtube.failed').form__msg {{ vee_youtube.errors[0] }}
+                                            .form__uploadMediaBox
+                                                vue-media(:media_list="[form]",
+                                                        :fit_box = "false",
+                                                        key="youtube_media")    
+                                        validation-provider(v-if="media_block !== 'youtube'", rules='required|ext:jpg,png,pdf',immediate='immediate',name='上傳檔案',v-slot='vee_upload', key='upload') 
+                                            .form__line(:class='vee_upload.classes')
+                                                
+                                                label.form__fileBox__msg.mg-b-10
+                                                    i.material-icons input
+                                                    |                                         上傳檔案
+                                                    input(@change='set_media($event,vee_upload)', type='file', name='medias', accept='image/png,image/jpeg,application/pdf',hidden='hidden', tab-index='-1')
+                                                .form__subject.mg-l-15.d-block-pad.mg-l-0-pad 可上傳 *.jpg, *.png, *.pdf
+                                                p(v-if='vee_upload.failed').form__msg {{ vee_upload.errors[0] }}
+                                                p(v-if='vee_upload.passed').form__msg OK
+                                            
+                                            .form__uploadMediaBox
+                                                vue-media(:media_list="[form]",
+                                                        ref="vue_media"
+                                                        :fit_box= "true",
+                                                        key="local_media")   
+                                                
+                                .form__group
+                                    validation-provider(rules='max_trim:1000', name="描述", v-slot='vee')    
+                                        .form__line(:class='{"form__line--invalid":vee.failed,"form__line--valid": vee.passed}') 
+                                            span.form__subject.form--required  描述：
+                                                i.material-icons(v-if='vee.passed') done
+                                                span(v-if='vee.valid') ( 還可輸入 {{ 1000 - form.desc_literal.trim().length }} 個字)
+                                            input(v-model='form.desc_literal',type='text', name='desc_literal', hidden='hidden',  tab-index="-1")
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }} 
+                                                span(v-if="vee.failedRules.max") ( 超出 {{form.desc_literal.length.trim() - 1000}} 個字)
+                                        .form__line
+                                            medium-editor.block.raised.medium-editor__userCustom(:text='form.description', :options='medium.options', @edit='processEditOperation($event,vee)', custom-tag='div')
+                                    textarea(v-model='form.description', name='description', hidden='hidden', tab-index=-1)
+                                    .form__line
+                                        button.form__flexLine__button--lightup.float-r(type='submit') 建立新影音
+
+block foot_script    
+    script(src='/static/javascripts/edit_media.js')
+

@@ -1,0 +1,82 @@
+extend layout.pug
+
+block insert_script_head
+    if data.desc_literal 
+        meta(name="description" content="本網站僅供學習用途 / " + data.desc_literal.slice(0,25))
+        meta(property="og:description", content="本網站僅供學習用途 / " + data.desc_literal.slice(0,25))
+    else 
+        meta(name="description" content="本網站僅供學習用途" )
+        meta(property="og:description", content="本網站僅供學習用途")
+    meta(property="og:title", content= title )
+    meta(property="og:url", content=originalUrl)
+    
+    meta(property="og:image", content=hostname+data.cover_image)
+
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/moment-with-locales.min.js")
+    script.
+        let page_data = !{JSON.stringify(data)}
+
+block content
+    #fb-root
+    script(async=true, 
+           defer=true, 
+           crossorigin='anonymous', 
+           src='https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v5.0')
+
+    main#content
+        .container-lg
+            .pure-g
+                .pure-u-md-1.pure-u-5-24
+                    .block
+                        figure.user__photoBlock
+                            .user__photoBlock__photoBox
+                                img.user__photoBlock__photoBox__photo(:src='user.info.cover_image', alt='使用者頭像')
+                            figcaption.user__photoBlock__nameBox
+                                span.user__photoBlock__name=data.name
+                        nav
+                            form(autocomplete='off')
+                                ul.mg-b-10.reset-ul.d-none-pad
+                                    each block in block_collection
+                                        li.list-item
+                                            label.form__radioItem.form__radioItem--sub
+                                                input(v-model='util.active_block', type='radio', name='component', value= block.value)
+                                                span.form__radioItem__content=block.name + ' ' + block.sub_desc
+                                    
+                                div.d-none.d-block-pad
+                                    .form__line__inputBox.w-full
+                                        select.form__select(name='active_block', v-model='util.active_block')
+                                            each block in block_collection
+                                                option(value=block.value)=block.name
+                                        .form__line__inputBox__activeBorder
+                .pure-u-md-1.pure-u-13-24
+                    transition(name="vue_slide_up",
+                            mode="out-in" ,
+                            appear=true ,
+                            @enter="block_grow",
+                            @leave="block_scroll"
+                            )
+                        component.min-h-500.max-h-0(:is='util.active_block',
+                                :datas='user[util.active_block]')
+                .pure-u-md-1.pure-u-6-24(style="overflow:hidden")
+                    .fb-page(v-if='user.info.fb_pages',
+                        :data-href=" 'https://www.facebook.com/'+ user.info.fb_pages ",
+                        data-height="500" ,
+                        data-width="500" ,
+                        data-tabs="timeline,events"
+                        data-hide-cover="false",
+                        data-show-facepile="false",
+                        data-adapt_container_width="true",
+                        data-small_header="false",
+                        data-show_facepile="true")
+
+        nav.fixButtonGroup(style='z-index: 9998;')
+            if isOwner
+                cue1(href="/user/edit/my")  
+            cue0
+            
+                      
+
+
+block foot_script
+    script(src='/static/javascripts/control_user.js')

@@ -1,0 +1,69 @@
+extend layout.pug
+
+block insert_script_head
+    script.
+        let page_data = !{JSON.stringify(data)}
+        var option_type = !{JSON.stringify(ENUMS.TYPES)};
+
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/vue-media.js")
+    script(src='/static/javascripts/vueMediumEditor.min.js')
+    script(src="/static/javascripts/vee-validate.full.min.js")
+    script(src="/static/javascripts/validator_setting.js")
+block content
+    main#content
+        transition(name="vue_appear",appear="")
+            .container-md(style="visibility : hidden" , 
+                        :class="{'visibility-visible' : vue_mounted}",
+                        v-show="vue_mounted")
+                if error
+                    .msgBox.msgBox--alert=error
+                input(v-model='form.default_cover_url', type='text',name="default_cover_url" ,hidden='hidden',tab-index="-1")
+                section.pure-g
+                    validation-observer.pure-u-1(v-slot='obs')
+                        form.block(method='post', :action="'/media/edit/' + form._id", enctype='multipart/form-data', @submit.prevent='onSubmit($event,obs)')
+                            header.block__head
+                                i.material-icons.block__head__icon mode_edit
+                                h4.block__head__title 編輯影音
+                            .form__body.form__body--unitSub
+                                .form__group
+                                    validation-provider(rules='min_trim:1|max_trim:50|required',name='標題',v-slot='vee') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            span.form__subject.form--required 標題：
+                                                i.material-icons(v-if='vee.passed') done
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.title', type='text', name='title')
+                                                .form__flexLine__inputBox__activeBorder
+                                    .form__line
+                                        span.form__subject 類型：
+                                        .form__line__inputBox
+                                            select.form__select(v-model='form.type', name='type')
+                                                each TYPE in ENUMS.TYPES
+                                                    option(value=TYPE)=TYPE
+                                            .form__line__inputBox__activeBorder
+                                    .form__line
+                                        label.form__checkBlock.form__checkBlock--sub
+                                            input(type='checkbox', name='publish_status', v-model='form.publish_status')
+                                            span.form__checkBlock__content 公開
+                                    
+                                .form__group
+                                    validation-provider(rules='max_trim:1000', name="描述", v-slot='vee')    
+                                        .form__line(:class='{"form__line--invalid":vee.failed,"form__line--valid": vee.passed}') 
+                                            span.form__subject.form--required  描述：
+                                                i.material-icons(v-if='vee.passed') done
+                                                span(v-if='vee.valid') ( 還可輸入 {{ 1000 - form.desc_literal.trim().length }} 個字)
+                                            input(v-model='form.desc_literal',type='text', name='desc_literal', hidden='hidden',  tab-index="-1")
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }} 
+                                                span(v-if="vee.failedRules.max") ( 超出 {{form.desc_literal.length.trim() - 1000}} 個字)
+                                        .form__line
+                                            medium-editor.block.raised.medium-editor__userCustom(:text='form.description', :options='medium.options', @edit='processEditOperation($event,vee)', custom-tag='div')
+                                    textarea(v-model='form.description', name='description', hidden='hidden', tab-index="-1")
+                                    .form__line
+                                        input(v-model='form.default_cover_url', type='text',name="default_cover_url" ,hidden='hidden',tab-index="-1")
+                                        input(v-model='form._id', type='text',name="_id", hidden='hidden' ,tab-index="-1")
+                                        button.form__flexLine__button--lightup.float-r(type='submit') 儲存
+
+block foot_script    
+    script(src='/static/javascripts/edit_media.js')

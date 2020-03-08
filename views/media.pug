@@ -1,0 +1,76 @@
+extend layout.pug
+
+block insert_script_head
+    if data.desc_literal 
+        meta(name="description" content="本網站僅供學習用途 / " + data.desc_literal.slice(0,25))
+        meta(property="og:description", content="本網站僅供學習用途 / " + data.desc_literal.slice(0,25))
+    else 
+        meta(name="description" content="本網站僅供學習用途" )
+        meta(property="og:description", content="本網站僅供學習用途")
+    meta(property="og:title", content= title )
+    meta(property="og:url", content=originalUrl)
+    meta(property="og:image", content=hostname+data.cover_image)
+
+    script(src="/static/javascripts/vue.min.js")
+    script(src="/static/javascripts/vue-media.js")
+    script(src="/static/javascripts/pdf.js")
+
+    script.
+        let page_data = !{JSON.stringify(data)}
+
+block content
+    #fb-root
+    script(async=true, 
+           defer=true, 
+           crossorigin='anonymous', 
+           src='https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v5.0')
+    main#content
+        transition(name="vue_slide_up",appear="")
+            .container-fluid(style="visibility : hidden" , 
+                          :class="{'visibility-visible' : vue_mounted}",
+                          v-show="vue_mounted")
+                nav.container-md.menu.menu--horizontal.stickyMenu--1.lh-50.menu--contrast
+                    ul.menu__list.reset-ul(@click.prevent="scrollToBlockByHash($event)")
+                        li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                            a.menu__link(href='#anchor-gallery')
+                                | 畫框
+                        li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                            a.menu__link(href='#anchor-info')
+                                | 資訊
+                        li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                            a.menu__link(href='#anchor-facebook')
+                                | 留言
+                
+                    
+                #anchor-gallery.container-md
+                    .pure-g.pure-g--disable-pd.pure-g__mediaCustom
+                        .pure-u__mediaCustom
+                            vue-media(ref="vue_media"
+                                    :media_list="now",
+                                    height="450px")
+                        
+                .container-md.pure-g--disable-pd
+                    article.pure-u-1
+                        #anchor-info.block.f_size-lg-pad.bg-contrast
+                            header.block__head.bg-contrast
+                                h1.block__head__title
+                                    | !{`影音 / ${data.title}`}
+                                    span.block__head__subDesc=' / ' + data.type
+                                p
+                                    span.block__head__subDesc
+                                        | 由 
+                                        a(href="/user/"+data.owner.user._id)=data.owner.name
+                                        | 建立
+                            article.block__body
+                                .block__item__article
+                                    | !{data.description}
+                        #anchor-facebook.block.bg-contrast
+                            .fb-like(data-href=host + "/media/" + data._id, data-width='200px', data-layout='button_count', data-action='like', data-size='small', data-show-faces='true', data-share='true')
+                            .fb-comments(data-href=host + "/media/" + data._id, data-width='100%', data-numposts='5')
+        nav.fixButtonGroup(style='z-index: 9998;')
+            if isOwner
+                cue1(href='/media/edit/'+data._id)  
+            cue0
+block foot_script
+    
+    script(src='/static/javascripts/control_media.js')

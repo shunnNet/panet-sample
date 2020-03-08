@@ -1,0 +1,79 @@
+extend layout.pug
+
+block content
+
+    #content
+        .container-md
+            .pure-g
+                .pure-u-1
+                    .block.bg-contrast
+                        .block__head
+                            h2.block__head__title 人才
+                        .block__body
+                            h3.block__body__title 技能：
+                            ul.reset-ul.ul-inline-li
+                                each SKILL in ENUMS.SKILLS
+                                    li.tag.tag--sub
+                                        a.reset-a(href="/query?field=user&skill="+SKILL)=SKILL
+            .pure-g
+                .pure-u-1
+                    .block.bg-work
+                        .block__head
+                            h2.block__head__title 工作
+                        .block__body
+                                h3.block__body__title 需求：
+                                ul.reset-ul.ul-inline-li
+                                    each SKILL in ENUMS.SKILLS
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=work&demand="+SKILL)=SKILL
+                            
+                                h3.block__body__title 地點：
+                                ul.reset-ul.ul-inline-li
+                                    each CITY in ENUMS.CITY
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=work&location="+CITY)=CITY
+            .pure-g
+                .pure-u-1
+                    .block.bg-event
+                        .block__head
+                            h2.block__head__title 活動
+                        .block__body
+
+                                h3.block__body__title 共通分類：
+                                ul.reset-ul.ul-inline-li
+                                    each TYPE in ENUMS.TYPES
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=event&type="+TYPE)=TYPE
+
+                                h3.block__body__title 地點：
+                                ul.reset-ul.ul-inline-li
+                                    each CITY in ENUMS.CITY
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=event&location="+CITY)=CITY
+            .pure-g
+                .pure-u-1
+                    .block.bg-idea
+                        .block__head
+                            h2.block__head__title 想法
+                        .block__body
+
+                                h3.block__body__title 共通分類：
+                                ul.reset-ul.ul-inline-li
+                                    each TYPE in ENUMS.TYPES
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=idea&type="+TYPE)=TYPE
+            .pure-g
+                .pure-u-1
+                    .block.bg-contrast
+                        .block__head
+                            h2.block__head__title 作品
+                        .block__body
+                            
+                                h3.block__body__title 共通分類：
+                                ul.reset-ul.ul-inline-li
+                                    each TYPE in ENUMS.TYPES
+                                        li.tag.tag--sub
+                                            a.reset-a(href="/query?field=media&type="+TYPE)=TYPE
+                    
+
+

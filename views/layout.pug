@@ -1,0 +1,165 @@
+doctype html
+html(lang='zh-Hant-TW')
+    head
+        link(rel="icon" href="data:image/ico;base64,aWNv")
+        title 表藝人 - #{title}
+
+        meta(charset='UTF-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        meta(http-equiv='X-UA-Compatible' content='ie=edge')
+        link(href='https://fonts.googleapis.com/css?family=Noto+Sans+TC:300&display=swap' rel='stylesheet')
+        link(href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet')
+        link(href='/static/stylesheets/all.min.css' rel='stylesheet')
+
+        block insert_script_head
+        block page_head
+
+    body
+        
+        #js-overlay.overlay.z-second(onclick="closeAllMenus()")
+        #js-top-box(style="display:flex;flex-direction:column;flex:1")
+            nav.mainNav.z-top
+                #js-scrollbarPlaceholder-nav.z-second
+                #js-menu-query.z-top.menu__query.raised.d-block-screen.w-full
+                    form.block(method='get', action='/query')
+                        .block__body
+                            .form__flexLine
+                                .form__flexLine__inputBox.mg-b-10-pad
+                                    select.form__select(name='field')
+                                        option(value='user') 找人才
+                                        option(value='idea') 找點子
+                                        option(value='event') 找活動
+                                        option(value='work') 找工作
+                                        option(value='media') 找影音
+                                    .form__flexLine__inputBox__activeBorder
+                                .form__flexLine__inputBox.flex-1.pos-relative.mg-l-10.mg-l-0-pad.mg-b-10-pad
+                                    input#js-auto-focus.form__input.flex-1(name='qs', type='text', placeholder='輸入要尋找的關鍵字')
+                                    .form__flexLine__inputBox__activeBorder
+                                button.form__flexLine__button--lightup.mg-l-10.mg-l-0-pad(type='submit')
+                                    i.material-icons search    
+                .container-lg.pure-g
+                    .pure-u-1-5.pure-u-md-1.text-center
+                        .nav__iconBox.float-l.d-none.d-block-pad.hover-lightup(onclick='toggleMenu()')
+                            i.material-icons list
+                        .nav__iconBox.float-r.d-none.d-block-pad.hover-lightup(onclick='toggleNavSearch()')
+                            i.material-icons search
+                        a.nav__logo(href='/index')
+                            img.img--fitHeight(src='/static/images/表藝人-01.svg', alt='logo')
+                    .pure-u-4-5.pd-0-pad
+                        
+                        #js-side-menu.menu.menu--horizontal.menu--horizontal__mobile.menu__fixLeft__md
+                            ul.menu__listRight.color-sub
+                                if session
+                                    if session.login
+
+                                        li.menu__item.menu__item--hasChildren
+                                            p.menu__text.color-sub
+                                                img.menu__img.menu__img--circle(src=session.account.user.cover_image, alt='')
+                                                span.mg-l-5.d-none-pad= session.account.user.name
+                                            ul.menu__children.menu__children--right.bg-contrast
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/user/'+session.account.user._id) 個人檔案
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/user/edit/my') 編輯
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/account/logout') 登出
+                                        li.menu__item.menu__item--hasChildren
+                                            p.menu__text.color-sub 建立
+                                            ul.menu__children.menu__children--right.bg-contrast
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/idea/create/new') 想法
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/event/create/new') 活動
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/media/create/new') 作品
+                                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                                    a.menu__link.color-sub(href='/work/create/new') 工作
+                                    else
+                                        li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                            a.menu__link.color-sub(href='/account/registry') 註冊
+                                        li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                            a.menu__link.color-sub(href='/account/login') 登入
+                                else
+                                    li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                        a.menu__link.color-sub(href='/account/registry') 註冊
+                                    li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                        a.menu__link.color-sub(href='/account/login') 登入
+                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                    a.menu__link.color-sub(href='/index') 首頁
+                                li.menu__item.spreadBorderBottom.spreadBorder--coarse
+                                    a.menu__link.color-sub(href='/catagories') 全部類別
+                            ul.menu__flexBox.reset-ul.color-sub.d-none-screen
+                                form(method='get', action='/query', style="flex:1 0 0")
+                                    .form__flexLine.pd-0
+                                        .form__flexLine__inputBox.mg-b-10-pad
+                                            select.form__select(name='field')
+                                                option(value='user') 找人才
+                                                option(value='idea') 找點子
+                                                option(value='event') 找活動
+                                                option(value='work') 找工作
+                                                option(value='media') 找影音
+                                            .form__flexLine__inputBox__activeBorder
+                                        .form__flexLine__inputBox.flex-1.pos-relative.mg-l-10.mg-l-0-pad.mg-b-10-pad
+                                            input.form__input.flex-1(name='qs', type='text', placeholder='輸入要尋找的關鍵字')
+                                            .form__flexLine__inputBox__activeBorder
+                                        button.form__flexLine__button--sub.mg-l-10.mg-l-0-pad(type='submit', style="flex:0 1 0px",tab-index=3)
+                                            i.material-icons search
+                                        
+                            .nav__iconBox.d-none.d-block-screen.d-none-pad.float-r.hover-lightup(onclick='toggleNavSearch()')
+                                i.material-icons search
+
+            block content
+
+            footer.footLayout
+                .container-sm
+                    .pure-g
+                        .pure-u-6-24.pure-u-md-1-2
+                            a.logoBox.a__block.text-center(href="https://pareviews.ncafroc.org.tw/", target="_blank", title="表演藝術評論台")
+                                img.img--fluid(src='https://pareviews.ncafroc.org.tw/wp-content/themes/pareviews-2019/images/logo.png', alt='表演藝術評論台')
+                        .pure-u-6-24.pure-u-md-1-2
+                            a.logoBox.a__block.text-center(href="https://mjkc.tw/?paged=2", target="_blank", title='每周看戲俱樂部')
+                                img.img--fluid(src='https://mjkc.tw/wp-content/uploads/2015/01/mjkclogo21.jpg', alt='每周看戲俱樂部')
+                        .pure-u-8-24.pure-u-md-1-2
+                            a.logoBox.a__block.text-center(href="https://www.artsticket.com.tw/CKSCC2005/Home/Home00/index.aspx", target="_blank", title='兩廳院售票網')
+                                img.img--fluid(src='https://www.artsticket.com.tw/ckscc2005/images//img/logo.jpg', alt='兩廳院售票網')
+                        .pure-u-4-24.pure-u-md-1-2
+                            a.logoBox.a__block.text-center(href="https://laijiatsai.com/", target="_blank", title='菜齊阿')
+                                img.logoBox__logo.img--fluid(src='data:image/png;base64,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', alt='菜齊阿')
+                .container-full
+                    .container-md
+                        .pure-g.lh-1-5
+                            .pure-u-6-24.pure-u-md-1
+                                a.a__block(href="/index",title="表藝人")
+                                    picture
+                                        source(srcset= "/static/images/表藝人-01.svg",type="image/svg+xml")
+                                        picture
+                                            source(srcset= "/static/images/表藝人-01.svg",type="image/svg+xml")
+                                            img.logoBanner__logo(src='/static/images/表藝人-01.png', alt='表演藝術人力銀行')
+                                        
+                                    
+                            .pure-u-8-24.pure-u-md-1.bd-l-sub
+                                .block
+                                    p
+                                        a.reset-a.hover-lightup.pd-h-10(href="#", style="letter-spacing:0.1em") 網站公告
+                                        a.reset-a.hover-lightup.pd-h-10.bd-l-sub(href="#", style="letter-spacing:0.1em") 隱私權條款
+                                    ul.pd-h-10.share-buttons
+                                        li
+                                            a.a__block(href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fpanet.herokuapp.com%2Findex&quote=%E8%A1%A8%E8%97%9D%E4%BA%BA', title='Share on Facebook', target='_blank')
+                                                img(alt='Share on Facebook', src='/static/images/Facebook.svg')
+                                        li
+                                            a.a__block(href='https://twitter.com/intent/tweet?source=https%3A%2F%2Fpanet.herokuapp.com%2Findex&text=%E8%A1%A8%E8%97%9D%E4%BA%BA:%20https%3A%2F%2Fpanet.herokuapp.com%2Findex', target='_blank', title='Tweet')
+                                                img(alt='Tweet', src='/static/images/Twitter.svg')
+                                        li
+                                            a.a__block(href='mailto:wendell20904102@gmail.com?subject=%E8%A1%A8%E8%97%9D%E4%BA%BA&body=Demo%20website:%20https%3A%2F%2Fpanet.herokuapp.com%2Findex', target='_blank', title='Send email')
+                                                img(alt='Send email', src='/static/images/Email.svg')
+                            .pure-u-10-24.pure-u-md-1
+                                .block
+                                    .fw-bolder
+                                        p.pd-h-10.block__body__subDesc(style="letter-spacing:0.3em") 本網站僅作於學習用途
+                                        
+            
+        #js-scrollbarPlaceholder
+        
+
+        script(src='/static/javascripts/global.js')
+        block foot_script

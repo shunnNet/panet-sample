@@ -1,0 +1,185 @@
+extend layout.pug
+
+block insert_script_head
+    script.
+        let page_data = !{JSON.stringify(data)}
+        let ENUM_SKILLS = !{JSON.stringify(ENUMS.SKILLS)};
+        let ENUM_CITYS = !{JSON.stringify(ENUMS.CITY)};
+
+
+block page_head
+    script(src="/static/javascripts/vue.min.js")
+    script(src='/static/javascripts/vue-multiselect.min.js')
+    script(src='/static/javascripts/luxon.js')
+    script(src='/static/javascripts/vue-datetime.js')
+    script(src='/static/javascripts/vueMediumEditor.min.js')
+    script(src="/static/javascripts/vee-validate.full.min.js")
+    script(src="/static/javascripts/validator_setting.js")
+
+block content
+    main#content
+        .container-md
+            if error
+                .msgBox.msgBox--alert=error
+            section.pure-g
+                nav.pure-u-md-1.pure-u-1-4
+                    - 
+                        const active_blocks = [{title:"編輯使用者",value:'user'},
+                                            {title:"帳戶",value:'account'}, 
+                                            {title:"活動",value:'events'},
+                                            {title:"工作",value:'works'},
+                                            {title:"想法",value:'ideas'},
+                                            {title:"影音",value:'medias'} ];
+
+                    form.block(autocomplete='off')
+                        ul.reset-ul.d-none-pad
+                            each block in active_blocks
+                                li.list-item
+                                    label.form__radioItem.form__radioItem--sub
+                                        input(v-model='active_block', type='radio', name='component', value=block.value)
+                                        span.form__radioItem__content !{block.title}
+                            
+                        div.d-none.d-block-pad
+                            .form__line__inputBox.w-full
+                                select.form__select(name='component', v-model='active_block')
+                                    each block in active_blocks
+                                        option(value=block.value) !{block.title}
+                                .form__line__inputBox__activeBorder
+
+                validation-observer.pure-u-md-1.pure-u-3-4(v-slot='obs')
+                    transition(name="vue_slide_up",
+                                mode="out-in" ,
+                                appear=true )
+                        form.block(v-if="active_block === 'user'", method='post', action="/user/edit/my", enctype='multipart/form-data', @submit.prevent='onSubmit($event,obs)')
+                            header.block__head
+                                i.material-icons.block__head__icon mode_edit
+                                h4.block__head__title 編輯使用者
+                            validation-provider.form__group(rules='ext:jpg,png',name='封面圖像',v-slot='vee', immediate='immediate')
+                                .form__line(:class='vee.classes')
+                                    span.form__subject 上傳封面圖像：( *.jpg , *.png )
+                                        i.material-icons(v-if='vee.passed') done
+                                    p(v-if='vee.failed').form__msg {{ vee.errors[0] }}
+                                .form__fileBox(@dragover.prevent='', @ondrop.prevent='')
+                                    #js-drag-box.form__fileBox__coverBox(:style='{top : form.cover_image_offset_y}', draggable='true', @dragstart='dragstart($event)', @drag='dragging($event)', @dragend.prevent='')
+                                        img.form__fileBox__cover(v-if='form.cover_image', :src='form.cover_image', alt='')
+                                        img.form__fileBox__cover(v-else='', :src='form.default_cover_url', alt='')
+                                    label.form__fileBox__msg
+                                        i.material-icons input
+                                        |                                 上傳封面圖像
+                                        input(@change='set_upload($event,vee.validate)', type='file', name='cover', hidden="hidden", accept='image/jpeg,image/png', tab-index="-1")
+                            input(name='cover_image_offset_y', v-model='form.cover_image_offset_y', type='text', hidden='hidden', tab-index="-1")
+                            
+                            section.form__body.form__body--unitSub
+                                .form__group
+                                    validation-provider(rules='min_trim:1|max_trim:15|required',name='名稱',v-slot='vee', immediate='immediate') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            
+                                            span.form__subject.form--required
+                                                i.material-icons(v-if='vee.passed') done
+                                                | 名稱：
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.name', type='text', name='name')
+                                                .form__flexLine__inputBox__activeBorder
+                                    validation-provider(rules='email',name='Email',v-slot='vee') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            span.form__subject
+                                                i.material-icons(v-if='vee.passed') done
+                                                | Email：
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.email', type='text', name='email')
+                                                .form__flexLine__inputBox__activeBorder
+                                    .form__line
+                                        label.form__checkBlock.form__checkBlock--sub
+                                            input(type='checkbox', name='show_email', v-model='form.show_email')
+                                            span.form__checkBlock__content 公開Email
+                                    .form__line
+                                        label.form__checkBlock.form__checkBlock--sub
+                                            input(type='checkbox', name='publish_status', v-model='form.publish_status')
+                                            span.form__checkBlock__content 公開個人檔案
+
+                                    .form__line
+                                        span.form__subject 性別： 
+                                        .form__line__inputBox
+                                            select.form__select(v-model='form.sex', name='sex')
+                                                each SEX in ENUMS.SEX
+                                                    option(value=SEX)=SEX
+                                            .form__line__inputBox__activeBorder
+                                    .form__line
+                                        span.form__subject  生日： 
+                                        vue-datetime(type='date', v-model='form.birthday', input-class='form__input--sub', hidden-name='birthday')
+                                    .form__line
+                                        span.form__subject  技能： 
+                                        .form__line
+                                            multiselect(v-model='form.skill', placeholder='請選擇技能', :options='skills', :multiple='true', :close-on-select='false')
+                                            select(name='skill', multiple='', v-model='form.skill', hidden='hidden', tab-index='-1')
+                                                option(v-for='skill in skills', :value='skill') {{skill}}
+                                    .form__line
+                                        span.form__subject  嗜好： 
+                                        .form__line
+                                            multiselect(v-model='form.habits', placeholder='請輸入嗜好', :options='form.habits', :multiple='true', :close-on-select='false', :taggable='true', @tag='add_tag($event,"habits")')
+                                            select(name='habits', multiple='', v-model='form.habits', hidden='hidden', tab-index='-1')
+                                                option(v-for='habit in form.habits', :value='habit') {{habit}}
+                                    .form__line
+                                        span.form__subject  主要活動區域： 
+                                        .form__line
+                                            multiselect(v-model='form.area', placeholder='請選擇區域', :options='areas', :multiple='true', :close-on-select='false')
+                                            select(name='area', multiple='', v-model='form.area', hidden='hidden', tab-index='-1')
+                                                option(v-for='area in areas', :value='area') {{area}}
+                                    .form__line
+                                        span.form__subject  關注的議題： 
+                                        .form__line
+                                            multiselect(v-model='form.concerned_topic', placeholder='請輸入議題', :options='form.concerned_topic', :multiple='true', :close-on-select='false', :taggable='true', @tag='add_tag($event,"concerned_topic")')
+                                            select(name='concerned_topic', multiple='', v-model='form.concerned_topic', hidden='hidden', tab-index='-1')
+                                                option(v-for='concerned_topic in form.concerned_topic', :value='concerned_topic') {{concerned_topic}}
+
+                                    validation-provider(rules='min_trim:1|max_trim:50',name='目前職稱',v-slot='vee') 
+                                        .form__flexLine(:class='vee.classes') 
+                                            span.form__subject
+                                                i.material-icons(v-if='vee.passed') done
+                                                | 目前職稱： 
+                                            p.form__msg(v-if='vee.failed') {{ vee.errors[0] }}
+                                            .form__flexLine__inputBox.flex-1
+                                                input.form__input.flex-1(v-model='form.now_job', type='text', name='now_job')
+                                                .form__flexLine__inputBox__activeBorder
+                                            
+                                    .form__line
+                                        span.form__subject  經歷： 
+                                        .form__line
+                                            multiselect(v-model='form.experience', placeholder='請輸入您的經歷', :options='form.experience', :multiple='true', :close-on-select='false', :taggable='true', @tag='add_tag($event,"experience")')
+                                            select(name='experience', multiple='', v-model='form.experience', hidden='hidden', tab-index='-1')
+                                                option(v-for='experience in form.experience', :value='experience') {{experience}}
+                                    .form__line
+                                        span.form__subject  想嘗試： 
+                                        .form__line
+                                            multiselect(v-model='form.want_to_try', placeholder='請輸入想嘗試的', :options='form.want_to_try', :multiple='true', :close-on-select='false', :taggable='true', @tag='add_tag($event,"want_to_try")')
+                                            select(name='want_to_try', multiple='', v-model='form.want_to_try', hidden='hidden', tab-index='-1')
+                                                option(v-for='want_to_try in form.want_to_try', :value='want_to_try') {{want_to_try}}
+                                    .form__flexLine
+                                        span.form__subject  FB粉絲專頁： 
+                                        .form__flexLine__inputBox.flex-1
+                                            input.form__input.flex-1(v-model='form.fb_pages', type='url', name='fb_pages')
+                                            .form__flexLine__inputBox__activeBorder
+                                    
+                                    .form__group
+                                        validation-provider(rules='max_trim:1000', name="描述", v-slot='vee', immediate='immediate')    
+                                            .form__line(:class='{"form__line--invalid":vee.failed,"form__line--valid": vee.passed}') 
+                                                span.form__subject 描述：
+                                                    i.material-icons(v-if='vee.passed') done
+                                                    span(v-if='vee.valid') ( 還可輸入 {{ 1000 - form.desc_literal.trim().length }} 個字)
+                                                input(v-model='form.desc_literal',type='text', name='desc_literal', hidden='hidden',  tab-index="-1")
+                                                p.form__msg(v-if='vee.failed') {{ vee.errors[0] }} 
+                                                    span(v-if="vee.failedRules.max") ( 超出 {{form.desc_literal.length.trim() - 1000}} 個字)
+                                            .form__line
+                                                medium-editor.block.raised.medium-editor__userCustom(:text='form.description', :options='medium.options', @edit='processEditOperation($event,vee)', custom-tag='div')
+                                        textarea(v-model='form.description', name='description', hidden='hidden', tab-index="-1")
+                                        
+                                        .form__line
+                                            input(v-model='form.default_cover_url', type='text',name="default_cover_url" ,hidden='hidden',tab-index="-1")
+                                            input(v-model='form._id', type='text',name="_id", hidden='hidden' ,tab-index="-1")
+                                            button.form__flexLine__button--lightup.float-r(type='submit') 儲存
+                        component(v-else='', :is='active_block', :datas='form[active_block]')
+
+block foot_script
+    script(src="/static/javascripts/edit_user.js")

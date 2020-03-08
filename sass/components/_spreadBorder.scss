@@ -1,0 +1,114 @@
+
+.spreadBorder{
+    position: relative;
+    
+    &::after {
+        @extend %spreadBorder__horizontal;
+        border-top : 2px solid $lightup;
+        border-bottom : 2px solid $lightup;
+        z-index : 2;
+        border-radius: inherit;
+    }
+    &::before{
+        @extend %spreadBorder__vertical;
+        border-left : 2px solid $lightup;
+        border-right: 2px solid $lightup;
+        z-index : 2;
+        
+    }
+}
+
+.spreadBorderBottom{
+    position: relative;
+    &::after {
+        @extend %spreadBorder__horizontal;
+        border-bottom : 2px solid $lightup;
+        
+    }
+    
+}
+
+.spreadBorder--hover{
+    &:hover{
+        &::after {
+            left  : 0;
+            right : 0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+        &::before{
+            top: 0;
+            bottom:0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+    }
+}
+
+
+.spreadBorder--focus{
+    &:focus{
+        &::after {
+            left  : 0;
+            right : 0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+        &::before{
+            top: 0;
+            bottom:0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+    }
+}
+
+
+
+.spreadBorder--coarse{
+    &:hover{
+        &::after {
+            left  : 0;
+            right : 0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+        &::before{
+            top: 0;
+            bottom:0;
+            visibility: visible ;
+            border-radius: inherit;
+        }
+    }
+    @include touch-device {
+        &:hover{
+            &::after {
+                left  : 50%;
+                right : 50%;
+                visibility: hidden ;
+               
+            }
+            &::before{
+                left  : 50%;
+                right : 50%;
+                visibility: hidden ;
+                
+            }
+        }
+        &:active{
+            &::after {
+                left  : 0;
+                right : 0;
+                visibility: visible ;
+                border-radius: inherit;
+            }
+            &::before{
+                top: 0;
+                bottom:0;
+                visibility: visible ;
+                border-radius: inherit;
+            }
+        }
+    }
+
+}

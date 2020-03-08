@@ -1,0 +1,276 @@
+extend layout.pug
+block page_head
+    meta(name="description" content="本網站僅供學習用途")
+    meta(property="og:title", content= '表藝人 - 表演藝術人力資料庫' )
+    meta(property="og:url", content=originalUrl)
+    meta(property="og:description", content="本網站僅供學習用途")
+    meta(property="og:image", content=hostname+"/static/images/表藝人-01.png")
+    
+    script(src="https://d3js.org/d3.v5.min.js")
+    script(src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js")
+    script(src="/static/javascripts/vue.min.js")
+    
+block content
+    
+    main#vue-content
+        #curtain.curtain--black.f-item-center(:class="{vue_dispear : documentLoaded}")
+            .loadingio-spinner-eclipse
+                .ldio
+                    div
+        .backgroundFilter(style="background-image:url(/static/images/theater.jpg)")   
+        #background-is-img.pos-relative
+            
+            section#js-full-window
+                .container-md
+                    transition(name= "vue_slide_down" appear=true )
+                        section.pure-g(style="transition: 1s")
+                            .pure-u-1
+                                .logoBanner
+                                    h1.text-center
+                                        picture
+                                            source(srcset= "/static/images/表藝人-00.svg",type="image/svg+xml")
+                                            img.logoBanner__logo(src='/static/images/表藝人-00.png', alt='表藝人 - 表演藝術人力銀行')
+                    section.pure-g
+                        .pure-u-1
+                            form.block.font-size-lg(method='get', action='/query')
+                                .block__body
+                                    .form__flexLine
+                                        .form__flexLine__inputBox.mg-b-10-pad
+                                            select.form__select.form__select--contrast(name='field')
+                                                option(value='user') 找人才
+                                                option(value='idea') 找點子
+                                                option(value='event') 找活動
+                                                option(value='work') 找工作
+                                                option(value='media') 找影音
+                                            .form__flexLine__inputBox__activeBorder
+                                        .form__flexLine__inputBox.flex-1.mg-l-10.mg-l-0-pad.mg-b-10-pad
+                                            input.form__input.form__input--contrast.flex-1(name='qs', type='text', placeholder='輸入要尋找的關鍵字')
+                                            .form__flexLine__inputBox__activeBorder
+                                        button.form__flexLine__button--lightup.mg-l-10.mg-l-0-pad(type='submit')
+                                            i.material-icons search
+            
+            article.container-fluid
+                .container-md#js-fake_search(:class=" {'fakeSearch__hide' : fake_search_hide}"
+                                             style="transition : .5s")
+                    .pure-g
+                        .pure-u-1
+                            .banner
+                                header.banner__header.color-contrast
+                                    h2.banner__header__title 
+                                        span.color-lightup.fw-bolder 被看見
+                                        | 的表藝人
+                                    p.banner__header__desc 為自己標註
+                                        span.color-lightup.fw-bolder 技能
+                                        | ，其他人就可以透過技能的關鍵字找到你！
+                                .banner__body.banner.color-contrast
+                                    .pseudoSearchBox.form__flexLine
+                                        .pseudoSearchBox__inputBox.mg-b-10-pad#js-pseudo-search-user
+                                            span {{ fake_search.qs }}
+                                            .pseudoSearchBox__inputBox__sparkle
+                                        button.form__flexLine__button--sub.mg-l-10.mg-l-0-pad(:href="'/query?field=user&qs=' + fake_search.qs")
+                                            .material-icons search
+                                    
+                                    .pseudoUserCard(v-for="(result,i) in fake_search.result" , 
+                                                    :key="result.title + '_' + i ",
+                                                    :class="{'d-none-pad' : i > 0}")
+                                        .pseudoUserCard__photo
+                                        .pseudoUserCard__content
+                                            p.pseudoUserCard__content__title {{ result.title }}
+                                            .pseudoUserCard__content__desc
+                                                p 
+                                                    span.tag(v-for="tag in result.tags" , 
+                                                            :class="{'tag--lightup' : tag == fake_search.qs,'tag--sub': tag != fake_search.qs}") {{ tag }}
+                                                    
+                                footer                    
+                                    a.a__block.form__flexLine__button--lightup(href="/query?field=user&qs=") 查看所有人才                                       
+
+
+        .container-fluid#js-background_normal_line
+            .container-md
+                .banner
+                    .pure-g#js-work_cards(:class=" {'workCards__hide' : work_cards_hide}"
+                                           style="transition: .7s; ")
+                        .banner__body.w-full
+                            .pure-u-md-1.pure-u-1-3
+                                .card__info.raised
+                                    header.card__head
+                                        span.card__title 《表藝人》徵 群眾舞者
+                                        span.card__head__sub 舞蹈
+                                    section.card__content
+                                        p
+                                            span.card__content__subject 工作地點: 
+                                            span.fw-bolder 國家戲劇院
+                                        p
+                                            span.card__content__subject 開始: 
+                                            span.fw-bolder 2023/1/1 09:00
+                                        p
+                                            span.card__content__subject 結束: 
+                                            span.fw-bolder 2023/3/1 09:00
+                                        p 需求:
+                                            ul.card__ul
+                                                li.color-sub.fw-bolder
+                                                    | 舞者/ 1 名 / 每 1 Case 25000元 / 共 1 個時段
+                            .pure-u-md-1.pure-u-1-3.d-none-pad
+                                .card__info.raised
+                                    header.card__head
+                                        span.card__title 《表藝人》徵 群眾舞者
+                                        span.card__head__sub 舞蹈
+                                    section.card__content
+                                        p
+                                            span.card__content__subject 工作地點: 
+                                            span.fw-bolder 國家戲劇院
+                                        p
+                                            span.card__content__subject 開始: 
+                                            span.fw-bolder 2023/1/1 09:00
+                                        p
+                                            span.card__content__subject 結束: 
+                                            span.fw-bolder 2023/3/1 09:00
+                                        p 需求:
+                                            ul.card__ul
+                                                li.color-sub.fw-bolder
+                                                    | 舞者/ 1 名 / 每 1 Case 25000元 / 共 1 個時段
+                            .pure-u-md-1.pure-u-1-3.d-none-pad
+                                .card__info.raised
+                                    header.card__head
+                                        span.card__title 《表藝人》徵 群眾舞者
+                                        span.card__head__sub 舞蹈
+                                    section.card__content
+                                        p
+                                            span.card__content__subject 工作地點: 
+                                            span.fw-bolder 國家戲劇院
+                                        p
+                                            span.card__content__subject 開始: 
+                                            span.fw-bolder 2023/1/1 09:00
+                                        p
+                                            span.card__content__subject 結束: 
+                                            span.fw-bolder 2023/3/1 09:00
+                                        p 需求:
+                                            ul.card__ul
+                                                li.color-sub.fw-bolder
+                                                    | 舞者/ 1 名 / 每 1 Case 25000元 / 共 1 個時段
+                            
+                    .pure-g.bg-body
+                        .pure-u-1
+                            .banner__header.text-center
+                                h2.banner__header__title 想
+                                    span.color-lightup.fw-bolder 接Case
+                                    | ，
+                                    br.d-none.d-block-pad
+                                    span.d-none-pad 但是
+                                    span 沒人找你嗎？
+                                p.banner__header__desc 
+                                    span.color-lightup.fw-bolder 統一格式、平台，
+                                    | 讓你不怕沒事做
+                            footer
+                                a.a__block.form__flexLine__button--sub(href="/query?field=work&qs=") 查看所有工作
+                                        
+        article.container-fluid.bg-contrast
+            .container-md
+                .pure-g
+                    .pure-u-1
+                        .banner#js-idea_banner(:class=" {'ideaBanner__hide' : idea_banner_hide}")               
+                            .banner__header.text-center
+                                h2.banner__header__title(style="transition: .5s; ") 提出
+                                    span.color-lightup.fw-bolder 概念
+                                    | ，
+                                    br
+                                    | 尋找一起實現的同伴
+                                p.banner__header__desc(style="transition: .8s; ") 
+                                    | 你可以提出任何概念給人
+                                    span.color-lightup 討論
+                                    | 。
+                                    br
+                                    | 你也可以主動
+                                    span.color-lightup 徵求合作
+                                    | 對象，
+                                    br.d-none.d-block-pad 
+                                    | 讓有興趣的人一起完成你的想法。
+                            .banner__body(style="transition: 1s; ")
+                                #d3(style="width : 100% ; height:400px")
+                            footer    
+                                a.a__block.form__flexLine__button--sub(href="/query?field=idea&qs=") 查看所有概念
+                                   
+        article.container-fluid.bg-darken#js-media_banner(style="overflow:hidden;")
+
+            .container-md.pos-relative
+                .backgroundImageStack.far(:style= "{ transform: 'scale(5) translateY('+media_bg.far+')'}" ,style ="background-image:url(/static/images/medias-0.png)")
+                .pure-g.pos-relative
+                    .pure-u-1
+                        .banner.text-center
+                            .banner__header.color-contrast
+                                h2.banner__header__title 讓更多人
+                                    br.d-none.d-block-pad
+                                    | 認識你的
+                                    span.color-lightup.fw-bolder 創作
+                                p.banner__header__desc.fw-bolder
+                                    | 不只是
+                                    span.color-lightup 影片
+                                    | 、
+                                    span.color-lightup 圖片
+                                    | ，
+                                    br.d-none.d-block-pad
+                                    | 你甚至可以上傳
+                                    span.color-lightup 劇本
+                                    | 、
+                                    span.color-lightup 樂譜
+                                    | 的片段
+                            .banner__body(style="height : 200px")
+                            footer
+                                a.a__block.form__flexLine__button--lightup(href="/query?field=media&qs=") 查看作品
+        
+        article.container-fluid.bg-contrast
+            .container-lg
+                .pure-g
+                    .pure-u-1
+                        .banner#js-event_banner(:class=" {'eventCards__hide' : event_cards_hide}")
+                            .banner__header.text-center
+                                h2.banner__header__title 張貼
+                                    span.color-lightup.fw-bolder 活動
+                                    | ，
+                                    br.d-none.d-block-pad
+                                    | 讓好友圈外的人參與
+                                p.banner__header__desc.fw-bolder 
+                                    span.color-lightup.fw-bolder 小型活動、演出
+                                    | 也可以張貼在這裡
+
+                            .banner__body
+                                ul.pure-g.reset-ul
+                                    - const classes = ["reset-a","listItemCard","spreadBorder","spreadBorder--hover","f_size-xl"];
+                                    - const layout  = ["pure-u-1-3","pure-u-sm-1-2","pd-5"]
+                                    each catagory, i in ENUMS.TYPES
+                                        - var transitionTime = 0.5 + i/10;
+                                        li(class=layout)
+                                            a(class= classes 
+                                              style="transition:transform " + transitionTime + "s , opacity " + transitionTime +"s"
+                                              href="/query?field=event&type=" + catagory)
+                                                span.listItemCard__title #{catagory}
+                                                .listItemCard__bg(style="background-image:url(/static/images/"+ catagory +".jpg);")
+                                    
+                            footer
+                                a.a__block.form__flexLine__button--sub(href="/query?field=event&qs=") 查看所有活動
+                            
+    
+        article.container-fluid#js-welcome_banner
+            .container-md
+                .pure-g
+                    .pure-u-1
+                        .banner
+                            .banner__header.text-center
+                                h2.banner__header__title 歡迎你加入
+                                    span.color-lightup.fw-bolder 表藝人
+                                    p 已經有
+                                        span.color-lightup.fw-bolder#js-join_number(style="opacity:0") 1000
+                                        | 人加入
+                                p.banner__header__desc 
+                            .banner__body
+                            footer
+                                a.a__block.form__flexLine__button--lightup(href="/account/registry") 點我加入
+
+        nav.fixButtonGroup(style='z-index: 9998;')
+            cue0
+
+block foot_script
+    script(src="/static/javascripts/index.js")
+    
+
+

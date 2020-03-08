@@ -1,0 +1,44 @@
+.notebook{
+    &__tagBox{
+        display: flex;
+        &__tag{
+            text-align: center;
+            padding: 10px 10px;
+            flex: 1 0 0;
+            
+            cursor: pointer;
+            @extend %no-pointer-touch-device;
+            transition: .2s;
+        }
+    }
+    &__unit{}
+}
+
+.notebook--contrast{
+    background-color: $body-bg;
+    .notebook__tagBox__tag{
+        
+        &:hover {
+            @include bg-font-color($lightup,$contrast)
+        }
+    }
+    .notebook__tagBox__tag--active{
+        background-color: $contrast;
+    }
+
+}
+
+.notebook--raised{
+    background-color: $body-bg;
+    .notebook__tagBox__tag{
+        
+        &:hover {
+            @include bg-font-color($lightup,$contrast)
+        }
+    }
+    .notebook__tagBox__tag--active{
+        background-color: $contrast;
+    }
+
+}
+

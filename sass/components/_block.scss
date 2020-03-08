@@ -1,0 +1,165 @@
+
+
+.block {
+    display: block;
+    border-radius: $border-radius;
+    font-size : 1rem;
+    padding : 0.75em 1em;
+    box-sizing: border-box;
+
+    &__foot{
+        padding :  $block-padding-vertical 1em;
+    }
+    
+    &__head{
+        font-size : 1em;
+        padding : 0.75em 1em;
+        &__title{
+            font-size: 1.5em;
+            margin : 0;
+            display  : inline-block;
+        }
+        &__subDesc{
+            font-size : 0.95em;
+            color : $block-title-sub-color;
+        }
+        &__icon{
+            font-size: 2em;
+            vertical-align:  sub;
+        }
+        &__sideTool{
+            float : right;
+        }
+    }
+    &__body{
+        font-size : 1em;
+        line-height: 1.5em;
+        padding : 0 1em;
+        word-break: break-word;
+        &__title{
+            font-size : 1.2em;
+            margin : 0;
+            padding : 1em 0 ;
+        }
+    }
+    &__foot{
+        color    : $block-foot-font-color;
+        font-size: 0.8em;
+        .block__foot__item{
+            display : inline-block;
+            padding : 0 5px;
+        }
+        .block__foot__icons{
+            vertical-align: middle;
+        }
+    }
+}
+
+.block__item__listCover{
+    vertical-align: middle;
+}
+
+.block__item__listDesc{
+    float : right;
+}
+
+.block__item__article{
+    padding : 5px 10px;
+    line-height: 2;
+}
+
+.block__item__userCustomDesc{
+    padding : 10px;
+    line-height: 1.5; //no effect when multiple line in h2
+    border-top: 1px solid gray;
+    img {
+        max-width: 100%;
+    }
+}
+
+%a__block {
+    @extend  %reset-a;
+    display    : block;
+    cursor     : pointer;
+    @extend %no-pointer-touch-device;
+    user-select: none;
+}
+
+%a__block--sub{
+    color : $sub;
+    transition : .2s;
+    &:hover {
+        background-color: $lightup;
+        color           : $contrast;
+    }
+    &:active{
+        background-color: inherit;
+        color           : $sub;
+    }
+}
+
+%a__block--transparent{
+    color : $black;
+    transition : .2s;
+    &:hover {
+        background-color: inherit;
+        color           : $lightup;
+    }
+    &:active{
+        background-color: inherit;
+        color           : $black;
+    }
+}
+
+.a__block {
+    @extend  %a__block;
+}
+
+.a__block--sub{
+    @extend  %a__block--sub;
+}
+
+.listBlock__list,
+.listBlock__linkList,
+.listBlock__noData{
+    display    : block;
+    font-size  : 1em;
+    line-height: 2em;
+    padding    : 5px 10px;
+}
+
+.listBlock__list,
+.listBlock__linkList{
+    &__subDesc{
+        font-size : 0.8em;
+        line-height: 2.5em;
+    }
+}
+
+.listBlock__list{
+    border-bottom: 1px solid $sub;
+    overflow: hidden;
+    &__iconBox{
+        font-size : 1em;
+    }
+}
+.listBlock__linkList{
+    @extend  %text-ellipsis;
+    @extend  %a__block;
+    border-bottom: 1px solid black;
+}
+.listBlock__noData{
+    text-align: center;
+    color: $sub;
+}
+
+.listBlock__linkList--sub{
+    @extend  %a__block--sub;
+    border-color: $sub;
+}
+
+.listBlock__linkList--transparent{
+    @extend  %a__block--transparent;
+    border-color: $sub;
+}
+
